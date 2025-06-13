@@ -1,0 +1,490 @@
+
+[[sec_7]]
+== Data Capture and Classification
+
+The water level product contains data processed from sensors or derived
+from the output from mathematical models. In most cases, the data
+collected by the Producing Authority must be translated, sub-setted,
+reorganised, or otherwise processed to restructure into a usable data
+format.
+
+[[sec_7.1]]
+=== Data sources for water levels
+
+Water level data comes primarily from a few specific sources: observations;
+astronomical predictions; analyses; and forecast models. When such
+data are produced and quality-controlled by an approved Producing
+Authority (IHO Resolutions A6.3 & A6.9, S-62), they are suitable for
+inclusion in the water level data product.
+
+NOTE: S-104 Edition 2.0.0 uses only data types which the water level
+adjustment algorithm described in S-98 can process.
+
+*Observational Data*: Observational water level data comes initially
+from _in situ_ sensors in the field (for example tide gauges deployed
+along a channel) and if feasible interpolated or extrapolated values
+where there are no observations, and are monitored by the data collecting
+authority. After data acquisition, the data are quality controlled
+and stored by the Producing Authority. Some of the observed data may
+be available for distribution within minutes of being collected and
+are described as being 'in real time'. Other data may be days or years
+old, and are called historical data.
+
+NOTE: Observational Data in S-104 Edition 2.0.0 must still conform
+to the regular grid format.
+
+*Astronomical Predictions*: Astronomical predictions are produced
+when a sufficiently long time series of observed water level has been
+obtained and the data has been harmonically analysed by the Producing
+Authority to produce a set of amplitude and phase constants. The harmonic
+values can then be used to predict the astronomical component of the
+water level as a time series covering any desired time interval. Astronomical
+predictions can also be produced by other proven methods of tidal
+analysis. Data available for single stations or numerous stations
+must be arranged by the Producing Authority into a gridded field to
+conform to this edition of S-104.
+
+*Analysed and Hybrid Values*: Analysed water level values may be derived
+from sea-surface topography, data assimilation, statistical correlations
+or other means. A hybrid method combines two of or more approaches.
+
+*Forecast Data*: Hydrodynamic models numerically solve a set of fluid
+dynamic equations in two or three dimensions, and rely on observational
+data, including water levels and winds, to supply boundary conditions.
+Model grids may be either regular or irregular. Such models are often
+run several times per day. The forecast is a simulation made for many
+hours into the future using predicted winds, water levels, etc. The
+results are saved for a limited number of times, and are stored as
+arrays that derive from the model's grid. These models and methods
+are developed, run and monitored by the Producing Authority.
+
+These descriptions are summarised in <<table_7-1>>.
+
+[[table_7-1]]
+.Types of water level data, based on the source of the data
+[cols="48,125"]
+|===
+h| Name h| Description
+| Real-time observation | Observation no more than a few minutes old
+| Astronomical prediction | Value computed using harmonic analysis
+or other proven method of tidal analysis [IHO Res. 3/1919, as amended]
+| Analysis or hybrid method | Calculation by statistical or other
+indirect methods, or a combination of methods
+| Forecast | Gridded data from a two- or three-dimensional dynamic
+simulation of future conditions using predicted data for boundary
+forcing, via statistical method or combination
+
+|===
+
+[[sec_7.1.1]]
+==== Determination of trend
+
+When the average change of the water level over a defined period
+(time window) is greater than or equal to a threshold set by the Producing
+Authority it is considered "increasing". When it is less than or equal
+to the negative of the threshold it is "decreasing". When it is between
+the double-sided range (+/- threshold) set by the Producing Authority,
+it is "steady".
+
+The default time window over which the trend is calculated is 60 minutes.
+However, the 60 minutes window may not be ideal for all locations
+(for example, locations where there is no tide versus locations with
+strong tides) and producers may use a different window, in which case
+the window must be encoded in the _trendInterval_ metadata attribute.
+
+In areas of small water level range, for example Baltic Sea, use of
+"not available" is optional.
+
+The parameters used by the Producing Authority in determining the
+trend are the threshold value and the time interval. These parameters
+can be encoded in the metadata attributes _waterLevelTrendThreshold_
+and _trendInterval_ respectively. These attributes are allowed at
+the general metadata level and the Values group level. When encoded
+at the Values group level they apply only to the particular feature
+for which they are encoded and override the values encoded in the
+general metadata level.
+
+[[sec_7.2]]
+=== The production process
+
+Nearly all available information on water level from the Producer
+must be reformatted to meet the standards of this Product Specification
+(<<fig_10-1>> - the S-104 format). This means (a) populating the carrier
+metadata block (<<sec_12.3>>) and values group attributes (<<table_12-4>>)
+with the relevant metadata and (b) reorganizing the water level data
+when using the encoding rules (see <<sec_10>>).
+
+[[sec_7.2.1]]
+==== Metadata
+
+Metadata is derivable from the information available from the approved
+Authority. The following variables will require additional processing:
+
+* The bounding rectangle is computable from grid parameters. Note
+that the bounding box is encoded in both carrier metadata at the root
+group level and in the discovery metadata block (attribute _dataCoverage_)
+in the Exchange Catalogue, and must be the same in both places.
+* Position uncertainties may be available from the approved Authority's
+metadata.
+* Water level uncertainty may be available from the prediction or
+forecast model, specification of the water level gauge or calculated
+from observations.
+* If a previously issued data file is being cancelled or replaced,
+the _replacedData_ and/or _dataReplacement_ attributes in the Exchange
+Catalogue must be populated.
+
+All mandatory metadata in carrier metadata (<<sec_12.3>>) must be
+populated with appropriate values. In cases where the attribute is
+mandatory but inapplicable, the appropriate fill or null value described
+in <<sec_12.3>> must be used.
+
+Similarly, when the Exchange Set is being compiled, all mandatory
+metadata or information fields in the discovery metadata and Exchange
+Catalogue (<<sec_12.1;and!sec_12.2>>) must be populated. In cases
+where the attribute is mandatory but inapplicable, or the value is
+unknown or not included in the relevant enumeration list, the appropriate
+fill or null value described must be used.
+
+NOTE: (informative): Running the S-100 level validation checks and
+product-specific validation checks should detect missing metadata,
+but as of May 2024 the checks are yet to be completely defined and
+automated, and visual checking of metadata may be necessary. The Tables
+in <<sec_12.2;and!sec_12.3>> describe the mandatory requirements and
+allowed values.
+
+[[sec_7.2.2]]
+==== Water Level Data
+
+Observational water level, tidal water level predictions and gridded
+forecast data must normally be reformatted to fit the S-104 Product
+Specification. The following may require additional calculations:
+
+* For gridded data, if a land mask array is included, the mask value
+is substituted into the gridded values as appropriate (see <<sec_A-2>>).
+* Time stamps must be encoded footnote:[The display format for time
+is controlled by ECDIS application settings.] as UTC.
+
+[[sec_7.2.3]]
+==== Validation
+
+Dataset and Exchange Set validation tests must be passed before the
+Exchange Set is published.
+
+For numeric attributes, the fill value will be outside the allowed
+range of values specified in the Feature Catalogue, if any. Similarly,
+for enumerations, the fill value will not be a member of the enumeration
+as listed in the Feature Catalogue. Validation checks for datasets
+must allow for the presence of fill values.
+
+Validation must apply both the S-100 level validation checks defined
+in the S-100 validation specification (only those checks applicable
+to S-104 need be applied) and the product-specific validation checks
+provided in S-158:104.
+
+[[sec_7.2.4]]
+==== Digital Signatures
+
+Digital signatures are required for datasets and exchange sets intended
+for use on ECDIS. <<IHO_S_100,part=15>> describes the required signature
+algorithm and procedure for creating signatures. <<IHO_S_100,part=17>>
+describes where signatures must be provided. Additional guidance common
+to all datasets and exchange sets intended for ECDIS is being developed
+by the IHO. In the absence of this common guidance, the following
+guidance applies to S-104 datasets and exchange sets:
+
+* The signature algorithm must be as specified in <<IHO_S_100,part=15>>.
+* In discovery metadata, the *S100_SE_SignatureOnData* element should
+be used to encapsulate digital signatures for datasets, with the _dataStatus_
+attribute set to _unencrypted_ or _encrypted_ according to whether
+the signature is for an unencrypted or encrypted HDF5 file.
+* All resources in the exchange set must be signed, including any
+catalogue(s) and support files.
+* At least one signature is required for each resource (dataset, catalogue,
+or support file) in the exchange set (the ECDIS will ignore unsigned
+resources or resources for which signature verification fails).
+* Additional signatures may optionally be provided, or added downstream
+in the distribution chain, as provided for in S-100 Parts 17 and 15.
+
+[[sec_7.3]]
+=== Guidance for chunking and compression (informative)
+
+Chunking affects both dataset size and optimised data retrieval, the
+latter in the sense of how an ECDIS would most efficiently retrieve
+relevant chunks of a dataset when a user pans and zooms.
+
+Product Specification developers may desire to assess typical profiles
+and volumes of data for their datasets and develop guidance for the
+use of chunking and compression in their data products. Common practice
+is provided below. Product teams should assess its applicability to
+their own products and use, omit, and adapt it accordingly.
+
+The development of guidance on how to optimally and correctly do chunking
+and compression is ongoing; however, current best practice is:
+
+* For gridded data with 2 dimensions, for example
+dataCodingFormat = 2 (regular grids), choosing roughly-square rectangular
+chunk sizes will result in better performance when reading subsets
+of the data, and will probably result in better compression (one reason
+being that because NoData areas tend to be clustered together geographically,
+geographically-tiled chunks will compress out all those repetitive
+values).
+* Producers may use "auto-chunking", where this functionality is available
+(for example, in the production toolset's HDF5 library). Auto-chunking
+will choose chunk sizes automatically.
+* Choosing the right chunk sizes depends on the type of data and what
+the use of chunking is trying to accomplish. Auto chunking is more
+ideal for compression and is less ideal for time-critical access patterns.
+
+Auto-chunking means different datasets may be chunked differently.
+Applications cannot expect a standardised chunk size and will have
+to handle whatever chunk sizes they encounter in datasets.
+
+Data Producers should note experiences from preliminary testing:
+
+* 2D arrays - Need to be chunked based on how the data is read.
+If applications need to hold the entire grid in memory, use no chunking;
+otherwise estimate a reasonable size for data extraction. It is probably
+better to have the chunking set a little smaller than to make it too
+big, for I/O purposes.
+* 1D arrays - Do not chunk unless they are enormous (for S-104 this
+is not an issue since <<sec_11.2.1>> limits datasets to well below
+the size where chunking matters).
+* Given the relatively small sizes of datasets for S-104 chunking
+will not be of great benefit in read performance for S-104.
+
+Producers should determine the compression scheme that is optimal
+for their own use case, as needed.
+
+[[sec_7.4]]
+=== Datasets in a series
+
+Datasets in a time series (for example, 4X daily, 1X daily, etc.)
+may be distributed by any appropriate means, such as transfer to an
+accessible Internet service or via a licensed distribution channel.
+
+Each release by the producer should be accompanied by an exchange
+catalogue and bear the appropriate producer digital signatures as
+specified in <<IHO_S_100,part=17>> and S-98.
+
+Route monitoring applications require up-to-date water level information
+and periodic forecasts should be issued in a timely manner (meaning,
+a successor dataset should be released before the expiry of one full
+period after the starting date and time of its predecessor).
+
+Multi-pack exchange sets containing multiple sequential datasets may
+also be prepared as determined necessary by the producer, for example,
+for uses other than route monitoring on ECDIS. For multi-packs a single
+exchange catalogue containing discovery metadata for all datasets
+should be prepared
+
+[[sec_7.5]]
+=== Data use purpose
+
+[[sec_7.5.1]]
+==== Datum requirements
+
+Datasets intended for use in navigation must use the same CRS as the
+underlying <<IHO_S_102>> and ENC footnote:[There will usually be multiple
+underlying ENCs with different scale ranges, which will ideally use
+the same CRS and vertical datums. If not, the ENC Producer(s) should
+be consulted about possible ENC update plans and the appropriate ENC
+to which water level information should conform.]. Particular care
+should be taken to ensure that the horizontal and vertical datum are
+the same as the underlying <<IHO_S_102>> and ENC (with preference
+for <<IHO_S_101>> over S-57). The epoch of realization should be included
+in this assessment.
+
+NOTE: Conformant datums are a requirement for display on ECDIS, and
+water level adjustment as described in S-98 (see also Annex D).
+
+[[sec_7.5.2]]
+==== Spatial type
+
+All datasets intended for use in navigation on ECDIS must be issued
+as regular grids.
+
+[[sec_7.5.3]]
+==== Suitability for navigation
+
+Datasets may be marked for use in navigation if the Producer is able
+to consistently produce data of quality corresponding to the same
+zone of confidence as the underlying ENC. The Zones of Confidence
+are described in <<IHO_S_101,annex=A>> - Data Classification and Encoding
+Guide (attribute "category of zone of confidence in data" - CATZOC).
+
+Alternatively, datasets may be marked for use in navigation if the
+Producer is able to consistently produce data along with their uncertainties.
+
+Producers should note that combining S-104 data of lower accuracy
+with <<IHO_S_101>> or <<IHO_S_102>> data of higher accuracy may degrade
+the certainty of information available to the mariner.
+
+[[sec_7.5.4]]
+==== Use purpose metadata
+
+Datasets not intended for navigation purposes must have the discovery
+metadata attribute _notForNavigation_ in the corresponding *S100_DatasetDiscoveryMetadata* block set to _true_.
+
+Datasets intended for navigation must have the discovery metadata
+attribute _notForNavigation_ in the corresponding *S100_DatasetDiscoveryMetadata* block set to _false._
+
+[[sec_7.6]]
+=== Compliance categories
+
+Compliance categories are described in <<IHO_S_100,clause=4a-5.5>>.
+Datasets intended for use on ECDIS must meet the requirements for
+_category4_ and the compliance category must be encoded accordingly.
+
+[[sec_7.7]]
+=== Compliance with S-98
+
+S-98 Edition 1.0.0 consists of a specification for visual interoperability
+(S-98 Main, S-98 Parts A/B/C/D, and S-98 Annexes A and B) and a specification
+for harmonised display of S-100 products on ECDIS (<<IHO_S_98,annex=C>>).
+The requirements for datasets to be compliant with each aspect of
+interoperability are described below. Compliance to this Edition of
+S-104 is a fundamental requirement and will not be explicitly listed.
+
+[[sec_7.7.1]]
+==== Requirements for visual interoperability
+
+S-104 Edition 2.0.0 datasets are intended only for use with water
+level adjustment as described in S-98 and therefore this Product Specification
+does not specify requirements for visual interoperability.
+
+[[sec_7.7.2]]
+==== Requirements for harmonised user experience
+
+S-104 Edition 2.0.0 datasets are intended only for use with water
+level adjustment as described in S-98 and therefore this Product Specification
+does not specify requirements for achieving a harmonised user experience
+other than those required for water level adjustment functionality
+(<<sec_7.7.3>>).
+
+[[sec_7.7.3]]
+==== Requirements for water level adjustment
+
+. The horizontal and vertical datums must be the same as the horizontal
+and vertical datums of the underlying <<IHO_S_101>> (ENC) or <<IHO_S_102>>
+(Bathymetry) dataset(s). In case of conflict between datums used in
+<<IHO_S_101>> and <<IHO_S_102>>, the respective data producers and
+the TWCWG Chair should be consulted.
+. Requirements pertaining to maximum and minimum resolution of S-104
+grids in relation to the underlying <<IHO_S_101>> or <<IHO_S_102>>
+datasets must be met. (As of the preparation of this document, these
+requirements are not yet defined.)
+. There must be no spatial overlap between S-104 datasets created
+by the same producer, with the exception of datasets in the same temporal
+series, which must have the same spatial extent.
+. Temporal overlap is permitted only for datasets which are members
+of the same temporal series, when a forecast for a specific period
+is followed by a forecast for a later period. S-104 provides for a
+dataset naming convention that distinguishes successive datasets in
+a temporal series.
+. Other checks for cross-compatibility of <<IHO_S_101>>/<<IHO_S_102>>
+and S-104 datasets should also be satisfied. These checks will be
+defined in S-158:98 (Validation Checks - Interoperability).
+
+[[sec_7.8]]
+=== Datasets with multiple vertical datums
+
+In places where different regions of a quadrilateral grid coverage
+have water level information based on different vertical datums, the
+regions with different vertical datums must be encoded in the same
+HDF5 datafile as different WaterLevel feature instances.
+
+If the data are referenced to a local vertical datum, the name and
+epoch of the datum should be specified. If the dataset contains areas
+where the datum is calculated from different epochs and the magnitude
+of these differences exceeds 10 cm, the epoch of both datums should
+be specified. Epochal differences should be included in the uncertainty.
+
+The default vertical datum is specified in the root group (see <<table_12-1>>).
+Feature instance groups with a vertical datum that differs from the
+default vertical datum also encode the attributes _verticalDatum_
+and _verticalDatumReference_ on the feature instance group (<<table_12-3>>).
+Each feature instance, including any instances using the default vertical
+datum, must have its in-coverage extent (region covered by the vertical
+datum) coded using a _domainExtent.polygon_ polygon (see <<table_10-2>>
+and <<IHO_S_100,table=10c-11>>). Data for grid points outside the
+domain extent must consist of fill values. Points coinciding with
+the boundary of the domain extent polygon are considered to be within
+the polygon.
+
+There is no requirement for boundaries of domain extent polygons to
+coincide with grid cell boundaries.
+
+All WaterLevel instances in a dataset containing multiple vertical
+datums must use the same grid extents and grid parameters
+footnote:[This requirement allows applications to retrieve data value
+records for a geographic position by retrieving values from different
+WaterLevel instances in the same HDF5 file using the same array indexes
+for the _values_ arrays. Except on datum jump boundaries, at most
+one of the retrieved value records will be populated with actual (non-fill)
+values.].
+
+Domain extent polygons for vertical datums must conform to the rules
+for Level 3a geometry in <<IHO_S_100,part=7>>. In addition, the format
+for domain extent polygons defined in <<IHO_S_100,part=10c>> does
+not permit encoding domain extent polygons as multi-polygons or with
+holes, and interoperability with other data products is also desirable.
+Consequently, the following requirements apply to domain extent polygons:
+
+. The sequence of polygon vertex coordinates must define a closed
+loop boundary curve beginning and ending with the same point
+(see <<IHO_S_100,clause=7-4.3.2>>).
+. The boundary curve must not self-intersect (see <<IHO_S_100,clause=7-4.3.2>>).
+. Exterior boundaries must be in the clockwise direction, that is,
+the vertices must be ordered so that the interior is to the right
+of the curve (see <<IHO_S_100,clause=7-4.3.2>>).
+. If a vertical datum area is naturally a multi-polygon, each separate
+polygonal patch must be encoded as a separate feature instance with
+a distinct domain extent polygon.
+. If a vertical datum area has holes where other vertical datums are
+used, the enclosing area may be cut and/or partitioned into separate
+simple polygons so as to avoid the need for interior boundaries.
+. Land areas which will be always populated with fill values may be
+allocated to datum polygons as determined by the producer. It is suggested
+that allocation of land areas to domain extent polygons can be such
+as to simplify domain extent polygons as well as avoid unnecessary
+holes for land areas, provided that grid points on the land areas
+allocated to a domain extent polygon are always populated with fill
+values.
+. Domain extent polygons must not extend beyond the geographic extent
+of the grid footnote:[This requirement means that boundaries of vertical
+datum areas must be clipped by the grid's geographic boundaries when
+the datum area extends beyond a grid boundary. Depending on the relationship
+between shape of the datum area and grid boundaries, such clipping
+may result in a multi-polygon, which must then be split into separate
+WaterLevel feature instances.].
+
+. Teams producing <<IHO_S_101>>, <<IHO_S_102>>, and S-104 should coordinate
+to ensure that domain extent polygons in <<IHO_S_102>> and S-104 datasets
+match sounding datum features in the <<IHO_S_101>> dataset in areas
+where two sounding datum features adjoin in the <<IHO_S_101>> dataset.
+
+NOTE: In this edition of S-104, domain extent polygons are not intended
+for portrayal on ECDIS.
+
+[[sec_7.9]]
+=== Construction of coverages
+
+[[sec_7.9.1]]
+==== Grid cell structure
+
+Grids should generally use the <<IHO_S_100,part=8>> and <<ISO_19123_2005>>
+convention that grid data are nominally situated exactly at the grid
+points defined by the grid coordinates. This convention makes the
+grid points the "sample points", representing data over a neighborhood
+extending a half-cell in each direction (<<IHO_S_100,part=8,clause=8.2.5.8>>).
+If this convention is followed, the attribute _dataOffsetCode_ (<<sec_12.3.2>>)
+should not be encoded.
+
+In exceptional circumstances, producers may construct grids where
+the "sample points" are located at the centres of grid cells, in which
+case _dataOffsetCode_ must be encoded with value "5: Barycenter (centroid)
+of cell" (<<sec_12.3.2>>).
+
+Note that a grid with 100x100 cells will have 101x101 grid points.
+See <<sec_10.2.2.7>> for the rules specifying the dimensions of the
+values array for each convention.

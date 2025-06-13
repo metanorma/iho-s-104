@@ -1,0 +1,241 @@
+
+[[sec_4]]
+== Data Content and Structure
+
+[[sec_4.1]]
+=== Introduction
+
+This clause discusses the Application Schema, which is described in
+UML; the Feature Catalogue; dataset types, in which there is an extensive
+discussion of the water level data; and geometry.
+
+Water level data consist of one basic geographic feature type:
+
+A time series of water level height and trend relative to a vertical
+datum. An optional time attribute is also provided for use with certain
+types of water level information. The data can be represented for
+an array of points contained in a grid. Time and datum information
+are contained in the metadata.
+
+[[fig_4-1]]
+.Water level feature
+image::figure-4-1.png["",351,107]
+
+[[sec_4.2]]
+=== Application Schema
+
+The Application Schema is expressed in UML. The single feature type,
+*WaterLevel*, is depicted in <<fig_4-1>>. The details of the Application
+Schema are given in <<annexB>>, which also describes its relation
+to the conceptual model of coverage data described in <<ISO_19123_2005>>
+and <<IHO_S_100,part=8>>.
+
+[[sec_4.3]]
+=== Feature Catalogue
+
+[[sec_4.3.1]]
+==== Introduction
+
+The S-104 Feature Catalogue describes the feature types, information
+types, attributes, attribute values, associations and roles which
+may be used in the product. See <<annexC,style=full%>>
+
+The S-104 Feature Catalogue is available in an XML document which
+conforms to the S-100 XML Feature Catalogue Schema and can be downloaded
+from the IHO GI Registry website.
+
+[[sec_4.3.2]]
+==== Feature types
+
+[[sec_4.3.2.1]]
+===== Geographic
+
+Geographic (geo) feature types form the principal content of S-104
+and are fully defined by their associated attributes.
+
+[[sec_4.3.2.2]]
+===== Meta
+
+Meta features contain information about other features within a data
+set. Information defined by meta features override the default metadata
+values defined by the data set descriptive records. Meta attribution
+on individual features overrides attribution on meta features.
+
+[[sec_4.3.3]]
+==== Feature relationship
+
+A feature relationship links instances of one feature type with instances
+of the same or a different feature type. There are three common types
+of feature relationship: Association, Aggregation and Composition.
+In S-104 there are no relationships used.
+
+[[sec_4.3.4]]
+==== Attributes
+
+S-100 defines attributes as either simple or complex. S-104 uses three
+types of simple attributes, listed in <<table_4-1>>. There are no
+complex attributes.
+
+[[table_4-1]]
+.Simple feature attribute types.
+[cols="74,493"]
+|===
+h| Type h| Definition
+| Enumeration    | A fixed list of valid identifiers of named literal values
+| Real           | A signed Real (floating point) number consisting of a mantissa and an exponent
+| Date and Time
+a| A DateTime is a combination of a date and a time type. Character
+encoding of a DateTime shall follow <<ISO_8601_1988>>
+
+[example]
+19850412T101530
+
+|===
+
+[[sec_4.3.5]]
+==== Spatial quality
+
+Spatial quality attributes (<<fig_4-2>>) are encoded as horizontal
+and vertical uncertainty values. In S-100 Edition 5.0.0 they are encoded
+at the feature type level (see <<fig_4-2>> and <<table_12-2>>), which
+means they apply uniformly to all *Water Level* feature instances
+in the dataset and uniformly to all locations (grid points or station
+locations).
+
+[[fig_4-2]]
+.Spatial quality
+image::figure-4-2.png["",589,301]
+
+Note that uncertainty in water levels pertains to the quality of data
+values, not to spatial quality as that term is used in S-100, and
+is encoded differently and at the instance level (see <<table_10-2>>
+and <<sec_10.2.2.4>>).
+
+Water levels are usually defined at one or more individual locations,
+so spatial quality applies to these locations.
+
+NOTE: The *Spatial Quality* information type used in <<IHO_S_101>>
+and other products is not used in this Edition of S-104.
+
+[[sec_4.4]]
+=== Dataset types
+
+Datasets for S-104 include one basic type of dataset: HDF5 files,
+which may contain gridded water level data.
+
+[[sec_4.5]]
+=== Spatial Schema
+
+[[sec_4.5.1]]
+==== Coverages
+
+For an ECDIS, water level data are formatted as arrays of points contained
+in a regular grid. Further details on the data products are given
+in <<sec_10,style=full%>>.
+
+Water level data are categorised as follows, based on the data source:
+
+Computed, observed, predicted, or forecasted values (for example forecast
+data from hydrodynamic models) arranged in a regular grid.
+
+The spatial structure used by S-104 is a regular grid, described by
+S100_IF_Grid (S-100 Edition 5.2.0, clause 8-7.5). The class S100_IF_Grid
+is a realization of CV_RectifiedGrid and CV_GridValuesMatrix from
+<<ISO_19123_2005>> and a component of <<ISO_19123_2005>> continuous
+quadrilateral grid coverages as realized by S100_IF_GridCoverage.
+
+The types of water level data and their corresponding coverages are
+shown in <<table_4-2>>.
+
+[[table_4-2]]
+.Water level data types and their coverages
+[cols="277,108,133"]
+|===
+h| Type of Data h| Spatial Structure h| Coverage Type
+| Regularly-gridded data at one or more times | S100_IF_Grid | S100_IF_GridCoverage
+
+|===
+
+The spatial representations in S-104 are encoded using the implementation
+specification in <<IHO_S_100,part=10c>>, which realises <<IHO_S_100,part=8>>
+and <<ISO_19123_2005>> conceptual models. The relationships are depicted
+in <<fig_4-3>> below.
+
+[[fig_4-3]]
+.Coverages and their realisation from <<IHO_S_100,part=8>> and <<ISO_19123_2005>>
+image::figure-4-3.png["",586,185]
+
+[[sec_4.5.2]]
+==== Regular grids
+
+S-104 regular grid geometry is an implementation of S100_IF_Grid
+(<<IHO_S_100,part=8>> - Imagery and Gridded Data). The spatial grids
+for the regular grid type are two dimensional, orthogonal, and georeferenced
+(with the X or longitudinal axis directed toward the east), and are
+defined by several attributes, including grid origin, spacing, and
+grid indexing. Water level values apply at the vertices of the grid;
+that is, the intersections of the row and column lines. These parameters
+are explained in more detail below. A typical regular grid and some
+of its parameters are shown in <<fig_4-4>>.
+
+[[fig_4-4]]
+.Schematic of the regular grid and some of its attributes
+image::figure-4-4.png["",554,298]
+
+Vertices are shown as the filled squares at the intersections of the
+rows and columns. The offsetVectors are shown as the Latitudinal Spacing
+and Longitudinal Spacing. The origin is shown at the lower left corner
+of the grid.
+
+The grid is oriented to the Earth by the Coordinate Reference System
+(CRS), with the variable _coordinateReferenceSystem_. The origin contains
+the latitude and longitude as a _DirectPosition_ and is located at
+the point at the lower left (southwest) extent of the grid. The upper
+corner is the north easternmost point in the grid. The attribute _dimension_
+is 2, and the variable _interpolationType_ has one of the allowed
+values for interpolation methods specified in <<IHO_S_100,part=8>>.
+
+S-104 grids allow for different spacing of points along the X (longitudinal)
+axis and the Y (latitudinal) axis. For rectangular grids the offset
+vector establishes the cell size. The attribute _offsetVectors_ carries
+the two vectors for grid spacing (Latitudinal Spacing and Longitudinal
+Spacing). The first vector is 90 degrees clockwise from CRS north,
+and represents the distance between grid values on the X axis. The
+second vector is 0 degrees clockwise from CRS north, and represents
+the distance between the values on the Y axis. The distances are given
+in degrees.
+
+The attribute _extent_ effectively defines a bounding rectangle describing
+where data is provided. The attribute extent carries two sub-attributes;
+low and high. The sub-attribute _low_ carries the value "0, 0" to
+indicate the index values at the start of the extent is the southwest
+(lower left) corner of the grid. The sub-attribute _high_, carries
+the value of the highest position along the X axis and the highest
+position along the Y axis. For example, if the number of rows is _numROWS_
+and the number of columns is _numCOLS_, then the index values for
+_high_ would be '_numCOLS-1,numROWS-1_'. Together they form the grid
+coordinate of the upper right corner.
+
+The sequence rule for a regular cell size grid is straightforward.
+When the cells all have the same dimensions, the cell index can be
+derived from the position of the Record within the sequence of Records.
+The attribute _sequencingRule_ has two sub-attributes; _type_ and
+_scanDirection_. The sub-attribute type carries the value "linear",
+and the sub-attribute _scanDirection_ carries a comma-separated list
+of axis names for the coordinate reference system. Together with the
+value "0,0" stored in the attribute _startSequence_, they indicate
+that for a hypothetical S-104 grid with _scanDirection="X,Y",_ grid
+values along the X axis at the lowest Y axis position are stored first,
+starting with the left most value going right, followed by the values
+along the X axis at the next increment upward along the Y axis, and
+so on till the top of the Y axis. The last value in the value sequence
+of the grid will be at the top rightmost position in the grid.
+In <<fig_4-4>>, first all columns in row 1 are selected, then all
+columns in row 2, and so on.
+
+NOTE: Since the origin is at _i_index_ and _j_index_ value 0, the
+location of any longitude and latitude in the grid is computed by:
+
+_Longitude = GridOriginLongitude + (i_index)__×__(gridSpacingLongitudinal)_. [Eqn 4.1]
+
+_Latitude = GridOriginLatitude + (j_index)__×__(gridSpacingLatitudinal)_. [Eqn 4.2]

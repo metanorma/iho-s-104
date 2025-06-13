@@ -1,0 +1,428 @@
+
+[[sec_10]]
+== Data Product Format (Encoding)
+
+[[sec_10.1]]
+=== Introduction
+
+The water level data products must be encoded using one of the listed
+formats. The structure of the data product is discussed in <<sec_10.2>>.
+There is only one format allowed to encode data.
+
+*Format:*:: HDF5 for water level height and trend data
+
+*Character Set:*:: MD_CharacterSetCode (ISO19115-1) should be set
+to utf8
+
+*Specification:*:: S-100 profile of HDF5
+
+[[sec_10.2]]
+=== HDF5 product structure for time series and gridded data
+
+The key idea at the core of the structure is this: The organisation
+of the information is substantially the same for each of the various
+types of data, but the information itself will be interpreted differently.
+
+[[sec_10.2.1]]
+==== Data type definition
+
+HDF5 will be used for all water level data types.
+
+*Format Name:*:: HDF5
+
+*Character Set:*:: MD_CharacterSetCode (<<ISO_19115_1>>)
+
+*Specification:*:: S-100 profile of HDF5
+
+The S-100 HDF5 format is designed to be flexible enough to apply to
+coverage data in various forms, including: (a) data at one or more
+times for one or more individual, fixed stations, organised by time
+or station; (b) regularly-gridded data for one or more times;
+(c) ungeorectified gridded data for one or more times; and (d) TIN
+data. Since each type of data is structured differently, the type
+of data must be identified by the variable _dataCodingFormat_. Since
+S-104 contains only one format (regularly-gridded data), only one
+of the _dataCodingFormat_ values allowed by S-100 is used in S-104,as
+shown in <<table_10-1>>. (The letter in parentheses in the second
+column references the types listed earlier in this paragraph.)
+
+[[table_10-1]]
+.S-104 data type and value of the variable *_dataCodingFormat_* (see S-100 Edition 5.2.0, Clause 10c-10.1)
+[cols="105,284"]
+|===
+h| dataCodingFormat h| Type of Data
+| 2 | Regularly-gridded data at one or more times - type (b)
+
+|===
+
+For the use of HDF5, the following key concepts (<<IHO_S_100,part=10c,clause=10c-5.1>>) are important:
+
+* _File_ - a contiguous string of bytes in a computer store
+(memory, disk, etc), and the bytes represent zero or more objects
+of the model;
+* _Group_ - a collection of objects (including groups);
+* _Dataset_ - a multidimensional array of data elements with attributes
+and other metadata;
+* _Dataspace_ - a description of the dimensions of a multidimensional
+array;
+* _Datatype_ - a description of a specific class of data element including
+its storage layout as a pattern of bits;
+* _Attribute_ - a named data value associated with a group, dataset,
+or named datatype;
+* _Property List_ - a collection of parameters (some permanent and
+some transient) controlling options in the library;
+* _Link_ - the way objects are connected.
+
+In addition, a dataset may have one, two, or more dimensions, and
+each element in the dataset may be a compound. That is, each element
+may itself be an array of possibly different datatypes (float, integer,
+string, etc).
+
+For all data types, the product structure in HDF5 includes: (a) a
+metadata block; which is followed by (b) one or more Groups which
+contain the actual water level data. The water level information is
+saved in arrays that hold either gridded data or a time series.
+
+[[sec_10.2.2]]
+==== Product structure
+
+The structure of the data product follows the form given in
+<<IHO_S_100,part 10c>> - HDF5 Data Model and File Format. The general
+structure is given in <<fig_10-1>> and is the same as the generic
+structure described in S-100 with elements not used in S-104 omitted.
+
+[[fig_10-1]]
+.Outline of the data file structure for S-104 data files, showing the realisation of S-104 structure from the generic structure described in S-100 (see <<IHO_S_100,part=10c,figure=10c-7>>). Note that there are four levels from top to bottom
+image::figure-10-1.png["",596,453]
+
+In <<fig_10-1>> there are four levels:
+
+*Level 1*: At the top level lies the Root Group, and it contains the
+Root Metadata (<<table_12-1>>) and two subsidiary groups. The Root
+Metadata applies to all S-100 type products.
+
+*Level 2*: The next Level contains the Feature Information Group and
+the Feature Container Group. The Feature Information Group contains
+two datasets: the featureCode, which has the name of the S-100 feature
+(here WaterLevel); and the feature information dataset (WaterLevel)
+which contains a compound array with eight parameters for each S-100
+feature attribute (height, trend, and time). The Feature Container
+Group contains the Feature Type Metadata (<<table_12-2>>) and one
+or more Feature Instance Groups. The Feature Type Metadata is common
+to all water level products.
+
+*Level 3*: This contains one or more Feature Instances. A feature
+instance is, for example, a time series of gridded data for a single
+region; or a time series of astronomical predictions for a set of
+stations.
+
+*Level 4*: This contains the actual data for the feature. S-104 uses
+only the Values Group. The Positioning group in S-100 is not needed
+for regular grids and is therefore not used in this edition of S-104.
+
+The basic structure of the S-104 data product is shown in <<table_10-2>>.
+Levels refer to HDF5 structuring. (C.f. <<IHO_S_100,part=10c,figure=10c-9>>).
+Naming in each box below header line is as follows: *Generic name*;
+S-100 or S-104 name; and (_HDF5 type_) group, attribute or attribute
+list, or dataset.
+
+[[table_10-2]]
+.Overview of an S-104 data product
+[cols="152,153,153,152"]
+|===
+h| LEVEL 1 (ROOT) CONTENT h| LEVEL 2 CONTENT h| LEVEL 3 CONTENT h| LEVEL 4 CONTENT
+
+| *General Metadata* (see <<table_12-1>>) _(h5_attribute)_ | | |
+| *Feature Codes* Group_F (_h5_group)_ | *Feature Type Name* WaterLevel _(h5_dataset)_ | |
+| | *Feature Type Codes* featureCode _(h5_dataset)_ | |
+| *Feature Type* WaterLevel _(h5_group)_ | *Feature Type Metadata* (see <<table_12-2>>) _(h5_attribute)_ | |
+| | *Horz. & vert. Axis Names* axisNames _(h5_dataset)_ | | |
+| *First Feature Instance* WaterLevel.01 _(h5_group)_ | *Feature Instance Metadata* (see <<table_12-3>>) _(h5_attribute)_ |
+| | | *Uncertainty Data* uncertainty _(h5_dataset)_ |
+| | | *Domain extent polygon* domainExtent.polygon _(h5_dataset)_ (If and only if the feature covers an area with a vertical datum different from the root group.) |
+| | | *First data group* Group_001 _(h5_group)_ | *Time Attribute* timePoint _(h5_attribute)_
+| | | | *Height+trend Array* values _(h5_dataset)_
+| | | *Second data group* Group_002 _(h5_group)_ | *Time Attribute* timePoint _(h5_attribute)_
+| | | | *Height+trend Array* values _(h5_dataset)_
+| | | *Third data group* Group_003 _(h5_group)_ | *Time Attribute* timePoint _(h5_attribute)_ |
+| | | *Height+trend Array* values _(h5_dataset)_
+| | *Second Feature Instance* WaterLevel.02 _(h5_group)_ | *Feature Instance Metadata,* etc., as for first instance |
+|===
+
+The following clauses explain entries in <<table_10-2>> in more detail.
+
+[[sec_10.2.2.1]]
+===== Root group
+
+The Root group contains the Feature Codes group, the Feature Type
+group, and the simple attributes shown in <<table_12-1>>.
+
+[[sec_10.2.2.2]]
+===== Feature type codes (Group_F)
+
+This group specifies the S-100 feature to which the data applies.
+The group has no attributes and consists of two components:
+
+*featureCode* - a dataset with the name(s) of the S-100 feature(s)
+contained in the data product. For S-104, the dataset has a single
+element, the string "WaterLevel".
+
+*WaterLevel* - this is a dataset with the name contained in the *featureCode*
+dataset. The dataset contains a one-dimensional compound array of
+length 3 (one for each of the three water level attributes: height,
+trend, and uncertainty). Each of the three elements of string values
+has 8 values, as shown in <<table_10-3>>.
+
+NOTE: Values provided in <<table_10-3>> are required.
+
+[[table_10-3]]
+.Contents of the one-dimensional compound array (length = 3, compound elements = 8) WaterLevel. All values are strings
+[cols="4,12,27,19,18,20"]
+|===
+h| N h| Name h| Explanation h| Attribute 1 h| Attribute 2 h| Attribute 3
+
+| 1 | code      | Camel Case Name          | waterLevelHeight   | waterLevelTrend   | uncertainty
+| 2 | name      | Plain text               | Water Level Height | Water Level Trend | Uncertainty
+| 3 | uom.name  | Units of Measurement     | metre              |                   | metre
+| 4 | fillValue | Denotes missing data     | -9999.00           | 0                 | -1.00
+| 5 | datatype  | HDF5 datatype            | H5T_FLOAT          | H5T_ENUM          | H5T_FLOAT
+| 6 | lower     | Lower bound on attribute | -99.99             |                   | 0.00
+| 7 | upper     | Upper bound on attribute | 99.99              |                   | 99.99
+| 8 | closure
+| Open or Closed data interval.
+See S100_IntervalType in S-100 Part 1       | closedInterval    |                   | closedInterval
+|===
+
+The values in this array must be consistent with the corresponding
+entries in the Feature Catalogue. Optional attributes (here, only
+waterLevelTrend) are encoded in Group_F only for strict conformance
+to S-100 5.2.0 clause 10c-9.5. (Planned S-158:100 validation checks
+may emit a warning or error if attributes included in the feature
+catalogue are not found in Group_F.) If encoded in Group_F, they must
+be present (populated with the fill value, if necessary) in all feature
+instances in this dataset.
+
+[[sec_10.2.2.3]]
+===== Type group (WaterLevel)
+
+This group contains a dataset called _axisNames_ and one or more instances
+of the single feature *WaterLevel*. A single instance may contain
+a gridded forecast at multiple hours, or a set of time series predictions
+or observations. This group has the simple attributes shown in <<table_12-2>>.
+For S-104, _axisNames_ consists of two elements, the strings 'longitude'
+and 'latitude' (EPSG:4326 axis names). The contents of the _axisNames_
+array must be exactly the same as the axis names used by the appropriate
+registry entry for the coordinate system specified in the metadata;
+for EPSG, the axis names in the corresponding EPSG Registry entry
+must be used.
+
+[[sec_10.2.2.4]]
+===== Instance group (WaterLevel.nn)
+
+This group contains a single instance of the feature (see <<sec_10.2.2.3>>).
+The groups are numbered from 01 to 99. This group has the simple attributes
+shown in <<table_12-3>>, as well as the (water level, trend, and time)
+values groups, the (conditional) positioning group, and a dataset
+called 'uncertainty'.
+
+*Uncertainty Dataset* - The (optional) uncertainty data is contained
+in a compound HDF5 dataset named 'uncertainty'. There is a name and
+an uncertainty value for water level height, which is _waterLevelHeight_.
+The units of height uncertainty are metres. The default, denoting
+a missing value, is -1.0. The values in the uncertainty dataset are
+overridden for individual grid points by the _uncertainty_ component
+of the values record when it is populated by a non-fill value.
+
+*Domain extent polygon* - The domain extent polygon delimits the spatial
+extent of the domain of the coverage. It is encoded if and only if
+the feature covers an area with a vertical datum different from the
+root group. The encoding of domain extent polygons is described in
+<<IHO_S_100,table=10c-11>> and is reproduced and elaborated below.
+
+_Datatype_: Array (1-d): i=0, P - HDF5 dataset of type Compound
+(Float, Float).
+
+_Components_: <longitude, latitude> or <X, Y> (coordinates of bounding
+polygon vertices as a closed ring; that is, the first and last elements
+will contain the same values). Axis names, units and field sizes for
+the components should be the same as for the attributes which encode
+the grid location parameters (_gridOriginLatitude_ and _gridOriginLongitude_
+in the feature instance group - see <<table_12-3>>).
+
+The domain extent polygon must conform to the requirements for domain
+extent polygons described in <<sec_7.8>>.
+
+[[sec_10.2.2.5]]
+===== Value groups (Group_nnn)
+
+These groups each contain an attribute (the date-time stamp), and
+the compound data arrays containing water level height and trend,
+and optionally uncertainty. These groups have the simple attributes
+shown in <<table_12-4>>. These components are explained below.
+
+*Date-Time Stamp* - The date-time stamp is an attribute named _timePoint_
+with a single (string) value. For gridded data the time stamp is the
+time of validity for all points in the grid.
+
+*Value Arrays -* The height, trend and local uncertainty values (waterLevelHeight, waterLevelTrend and uncertainty) are stored in arrays named _values,_ with a prescribed number of rows (_numROWS_) and, if two-dimensional, columns (_numCOLS_).
+
+For a regular grid (_dataCodingFormat_ = 2), the height, trend and
+(local) uncertainty values will be for each point in the grid, the
+data array _values_ is two-dimensional, and the time for all points
+in the grid is given by the date-time stamp.
+
+[[sec_10.2.2.6]]
+===== Conditional geography group (Positioning)
+
+The group named *Positioning* contains all the locations (longitude
+and latitude values) that have associated data values. This group
+has no attributes..
+
+For _dataCodingFormat_ = 2 (regular grid), location data for grid
+points can be computed from the grid origin and number of grid points
+in each dimension, which are encoded as HDF5 attributes. The attribute
+_numPOS_ is not needed since the grid data is stored as a two-dimensional
+array with the number of rows and columns given by the numbers of
+grid points in each dimension. See <<IHO_S_100,part=10c,clause=10c-9.3>>
+for more information.
+
+NOTE: the variable names in this Group (longitude, latitude) must
+match in case and spelling those in _axisNames_.
+
+[[table_10-4]]
+.Values of _numPOS_ for the group _Positioning_
+[cols="83,209,141,110"]
+|===
+h| Data Coding Format h| Data Type h| Location Data h| Array Size: Value of numPOS
+| 2 | Regular grid | (Not applicable) | (Not applicable)
+|===
+
+[[sec_10.2.2.7]]
+===== Summary of generalised dimensions
+
+To summarise, for regular grids numPOS is inapplicable and X and Y
+positions of individual grid points are not stored. There are only
+data Groups containing water level data, which are stored in two-dimensional
+arrays of size _numROWS_ by _numCOLS_. The total number of data Groups
+is _numGRP_.
+
+The four variables that determine the array sizes (_numROWS_, _numCOLS_.
+_numPOS,_ and _numGRP)_ are given in <<table_10-5>>.
+
+[[table_10-5]]
+.The array dimensions used in the data product
+[cols="49,107,75,137,126,102",options="noheader"]
+|===
+.2+h| Data Coding Format .2+h| Data Type h| Positioning 3+h| Data Values
+   h| numPOS                h| numCOLS   h| numROWS       h| numGRP
+
+| 2 | Regular Grid | (not used) | numPointsLongitudinal | numPointsLatitudinal | numberOfTimes
+|===
+
+NOTE: The values of _numCOLS_ and _numROWS_ must be adjusted down
+by 1 if data points are at cell centres (dataOffsetCode = 5) in order
+to avoid overrunning the last row and column of the grid extent.
+
+[[sec_10.2.2.8]]
+===== Mandatory naming conventions
+
+The following group and dataset names are mandatory in S-100: 'Group_F',
+'featureCode', and (for S-104) 'WaterLevel', 'axisNames', 'Positioning',
+(for S-104) 'WaterLevel.nn', and 'Group_nnn'
+(n is an integer from 0 to 9). Attribute names shown in <<sec_12.3>>
+are also mandatory.
+
+[[sec_10.2.2.9]]
+===== Summary of product structure
+
+For regularly gridded data, the water level array is two dimensional,
+with dimensions _numPointsLongitudinal_ and _numPointsLatitudinal_.
+These attributes are part of feature instance metadata described in
+<<table_12-3>> and <<IHO_S_100,part=10c,table=10c-12>>. By knowing
+the grid origin and the grid spacings, the position of every point
+in the grid can be computed by simple formulae.
+
+The remaining groups each contain a title, a date-time value (attribute
+_timePoint_), and the water level array. The title can be used to
+identify each individual station with time-series data.
+For _dataCodingFormat_ = 2, the date-time is for the entire grid.
+The water level array is two dimensional, with a number of columns
+(_numCOLS_) and rows (_numROWS_). For a grid, the water value will
+be for each point in the grid.
+
+The format allows features to be encoded only with uniform time intervals.
+
+* For uniform time intervals, the time interval is encoded as an attribute
+of the Values group. In this case, the date-time of individual records
+is omitted from the water level array.
+
+The groups are numbered 1, 2, etc, up to the maximum number of groups,
+_numGRP_. For regular grids (_dataCodingFormat_ = 2), the number of
+groups is the number of time records.
+
+The overall structure of the water level data product is created by
+assembling the data and metadata. The product structure is compliant
+with the HDF5 data architecture, which allows multi-dimensional arrays
+of data to be grouped with metadata. The format of the data product
+(cf. <<fig_10-1>>) described above is portrayed in <<fig_10-2>>.
+The Carrier Metadata is discussed in <<sec_12.3>> (<<table_12-3;to!table_12-5>>),
+and the Values group attributes are discussed in <<sec_12.3>> (<<table_12-4>>).
+
+NOTE: The name of each Group is the 'Group_nnn', where nnn is numbered
+from 1 to _numGRP_.
+
+[[fig_10-2]]
+.Schematic of the S-104 HDF5 data product structure. The four parameters _numPOS_, _numCOLS_, _numROWS_, and _numGRP_ are explained in <<table_10-5>>. Valid stem:[Date-Time_{1,2,..."numGRP"}] have specific meanings and encodings for _dataCodingFormat_ = 2 (see <<table_12-6>>).
+[cols="a"]
+|===
+^h| HDF5 Dataset
+| File Metadata (<<table_12-3>>)
+
+^h| _Group:_ WaterLevel
+| Feature Type Metadata (<<table_12-4>>)
+
+^h| _Group:_ WaterLevel.01
+| Feature Instance Metadata (<<table_12-5>>)
+| uncertainty, domain extent (optional - <<table_10-2>>)
+
+^h| _Group:_ Group_001
+| Values Group attributes (<<table_12-6>>)
+| Valid stem:["Date-Time"_1]
+| Water Level + Trend Array (stem:[i = 0, ii"numCOLS" - 1], stem:[j = 0, ii"numROWS" - 1])
+
+^h| _Group:_ Group_002
+| Values Group attributes
+| Valid stem:["Date-Time"_2]
+| Water Level + Trend Array (stem:[i = 0, ii"numCOLS" - 1], stem:[j = 0, ii"numROWS" - 1])
+
+^h| _Group:_ Group_nnn
+| Values Group attributes
+| Valid stem:["Date-Time"_{"numGRP"}]
+| Water Level + Trend Array (stem:[i = 0, ii"numCOLS" - 1], stem:[j = 0, ii"numROWS" - 1])
+
+|===
+
+[[sec_10.2.2.10]]
+===== Digital Certification Block
+
+Information here is used to certify the validity or integrity of the
+data.
+
+This Edition does not provide for inclusion of certificates or digital
+signatures within the HDF5 file. When necessary, certificates and
+digital signatures must be provided for the HDF5 file as a whole,
+using the mechanisms described in S-100 Parts 15 and 17.
+
+[[sec_10.2.2.11]]
+===== Feature Identifiers
+
+Individual instances of features within a dataset are identified by
+the name of the instance group, for example, WaterLevel.01, WaterLevel.02,
+etc. Unique feature identifiers are constructed by combining the file
+name of the HDF5 dataset with the name of the instance group, separated
+by a ":" (colon).
+
+[example]
+104US00_CHES_TYPE1_20210630_0600:WaterLevel.01 identifies the feature
+instance coded in the WaterLevel.01 instance group in the file named
+104US00_CHES_TYPE1_20210630_0600.h5.

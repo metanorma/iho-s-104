@@ -1,0 +1,1102 @@
+
+[[sec_12]]
+== Metadata
+
+[[sec_12.1]]
+=== Introduction
+
+For information exchange, there are several categories of metadata required:
+
+* Metadata about the overall Exchange Set and Catalogue;
+* Discovery metadata about each of the datasets contained in the Catalogue; and
+* Discovery metadata about the support files that make up the package.
+
+The discovery metadata classes have numerous attributes which enable important information about the datasets and accompanying support files to be examined without the need to process the data, for example, decrypt, decompress, load, etc.
+
+Feature Catalogues can be included in the Exchange Set in support of the datasets. If included, discovery metadata about the Catalogues must also be provided.
+
+NOTE: S-104 datasets do not reference support files. The only support files allowed in the Exchange Set are "language packs" for Feature Catalogues and enumeration dictionaries, and these are not referenced from within the HDF5 datasets.
+
+Discovery metadata for each HDF5 dataset is given in an XML block within the Exchange Set Catalogue file, and can be accessed without opening the HDF5 file. In addition to discovery metadata, S-104 also provides for carrier metadata that is embedded within the HDF5 file, which provides information needed to process and display the data. Discovery metadata is described in <<sec_12.2>>; carrier metadata in <<sec_12.3>>.
+
+This clause defines the mandatory and optional metadata needed for S-104. In some cases (if provided by the Producer or Exchange Set packager) the metadata may be repeated in a language other than English. See S-100 Part 17, clauses 17-4.6 - 17-4.8 for guidance on encoding of metadata in languages other than English.
+
+[[sec_12.1.1]]
+==== Realisation of Exchange Set components and metadata classes (informative)
+
+The realization of S-104 Exchange Set components and metadata classes from <<ISO_19115_1>> and <<ISO_19115_3>> is the same as in <<IHO_S_100,part=17>>, depicted in <<fig_12-1>>. The figure depicts, from left to right:
+
+[type=i]
+. The relevant ISO data exchange structural classes;
+. The relevant ISO metadata classes for metadata for exchange;
+. S-100 structure classes representing the S-100/S-104 Exchange Set components;
+. The relevant S-100/S-104 Exchange Set metadata classes.
+
+Note that the only support files in S-104 are language packs or enumeration dictionaries, represented by *S100_SupportFile*. The corresponding metadata blocks are represented by *S100_SupportFileDiscoveryMetadata* elements.
+
+[[fig_12-1]]
+.Realisation of the Exchange Set classes (<<IHO_S_100,part=17,figure=17-1>> with relationships not used in S-104 omitted)
+image::figure-12-1.png["",590,605]
+
+[[sec_12.1.2]]
+==== Exchange Set components and related metadata
+
+<<fig_12-2>> depicts the relationships of Exchange Set "core" elements (datasets and Feature/Portrayal Catalogues) and Exchange Set metadata. This figure is derived from <<IHO_S_100,part=17,figure=17-2>>. Relationships not applicable to S-104 have been omitted (for example, the link between datasets and support files in <<IHO_S_100,figure=17-2>>, because S-104 datasets do not reference support files). Note also that the link between *S100_Dataset* and *S100_CatalogueMetadata* is implicit by means of the S-104 version to which the Feature Catalogue, Portrayal Catalogue and dataset conform, which must have the same Edition and revision components.
+
+[[fig_12-2]]
+.Components and associated metadata for the S-104 Exchange Set (<<IHO_S_100,part=17,figure=17-2>> with relationships not used by S-104 omitted)
+image::figure-12-2.png["",590,375]
+
+The rules governing the presence and roles of the exchange set components depicted in <<fig_12-2>> are given below.
+
+. Every Exchange Set must contain an Exchange Catalogue, represented by *S100_ExchangeCatalogue* in <<fig_12-2>>.
+. Dataset discovery metadata (*S100_DatasetDiscoveryMetadata*) must be provided in the Exchange Catalogue for each S-104 dataset in the Exchange Set.
+. Catalogue metadata (*S100_CatalogueDiscoveryMetadata*) must be provided in the Exchange Catalogue for any Feature and Portrayal Catalogues included in the Exchange Set.
+. The only support files allowed are language packs and enumeration dictionaries (both represented by *S100_SupportFile*). Their inclusion in Exchange Sets is optional.
+. Producers must not include ISO metadata files to convey information for ECDIS application processing, since processing these files is not an ECDIS requirement. All information necessary for ECDIS processing must be in CATALOG.XML
+. Language packs are described in <<IHO_S_100,part=18>> and provide translations of Feature Catalogues.
+. If a language pack is included, a support file discovery metadata block (*S100_SupportFileDiscoveryMetadata*) describing the file must be included in the Exchange Catalogue.
+. A signature file for the Exchange Catalogue must also be included in the Exchange Set (*S100_CatalogueSignature*).
+
+Since S-104 does not add product-specific metadata attributes, the S-100 metadata classes and Schema are used in S-104 Exchange Sets without extension. The constraints S-104 impose on generic S-100 metadata are described in the documentation Tables in <<sec_12.2>>.
+
+NOTE: The distribution package implements the additional S-104 constraints on metadata attributes (and many of the S-100 constraints) as Schematron rules in files available from the IHO Schema server. Implementers may substitute any implementation method to apply or check constraints instead of using Schematron-capable processing software.
+
+The tangible representations of the structure classes in <<fig_12-2>> within actual Exchange Sets are the digital files or folders containing the Exchange Set, dataset(s), Catalogue(s), and support files. The tangible representations of their roles as depicted in <<fig_12-2>> are the inclusion of the respective components within the Exchange Set. Documentation tables for the structure classes are not provided since the Exchange Set structure is described in <<sec_11.2.1>>.
+
+The metadata classes in <<fig_12-2>> are represented by XML files or XML blocks and are documented in <<sec_12.2>>.
+
+[[sec_12.2]]
+=== Discovery metadata
+
+An outline of the overall concept of an S-104 Exchange Set for the interchange of geospatial data and its relevant metadata is explained in <<sec_11.2.1;and!sec_12.1.1>>. The place of metadata in the Exchange Set is summarised in <<sec_12.1.2>>.
+
+<<fig_12-3>> depicts the structure of the Exchange Catalogue and its component discovery metadata blocks. The structure is the same as in <<IHO_S_100,part=17>>.
+
+[[fig_12-3]]
+.Relationship between Exchange Catalogue, discovery metadata, and dataset (from <<IHO_S_100,part=17,figure=17-6>>)
+image::figure-12-3.png["",415,284]
+
+The detailed structure of the S-104 Exchange Catalogue is depicted in <<fig_12-4>>. This figure is derived from <<IHO_S_100,part=17,figure=17-7>>, with the following restrictions:
+
+* Elements that are optional in the generic S-100 catalogue model but not used in S-104 are not shown; for example, the _updateNumber_ and _updateApplicationDate_ attributes in the dataset discovery class are not used in S-104.
+* Constraints that are specific to S-104 are summarised in a diagram note. Details about constraints are provided in the documentation tables following the diagram.
+
+In S-104 Edition 2.0.0 the only catalogues allowed are Feature Catalogues.
+
+The language used for the metadata is English.
+
+Time reference for all data will be UTC.
+
+*All water level values to be given in metres (up to two decimal places for real values).*
+
+More detailed information about the various classes and textual descriptions of the constraints are in the Tables in <<sec_12.2.1;to!sec_12.2.30>> following <<fig_12-4>>. Differences from generic S-100 metadata are emphasized for developer convenience in *bold* text.
+
+[[fig_12-4]]
+.Details of Exchange Set Catalogue classes. Based on <<IHO_S_100,part=17,figure=17-7>>
+image::figure-12-4.png["",909,542]
+
+[[sec_12.2.1]]
+==== S100_ExchangeCatalogue
+
+Each Exchange Set has a single S100_ExchangeCatalogue which is an XML file that contains meta information for the data in the Exchange Set. S-104 restricts the S-100 class as described in the Remarks column.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_ExchangeCatalogue | An Exchange Catalogue contains the discovery metadata about the exchange datasets and support files | - | - | *The optional S-100 attributes _identifier_, _contact_, and _productSpecification_ are mandatory in S-104*
+
+| Attribute | identifier | Uniquely identifies this Exchange Catalogue | *1* | S100_ExchangeCatalogueIdentifier | *Mandatory in S-104*
+
+| Attribute | contact | Details about the issuer of this Exchange Catalogue | *1* | S100_CataloguePointOfContact | *Mandatory in S-104*
+
+| Attribute | productSpecification | Details about the Product Specifications used for the datasets contained in the Exchange Catalogue | *1* | S100_ProductSpecification | *Mandatory in S-104*
+
+| Attribute | defaultLocale | Default language and character set used for all metadata records in this Exchange Catalogue | 0..1 | PT_Locale | Default is English and UTF-8
+
+| Attribute | otherLocale | Other languages and character sets used for the localized metadata records in this Exchange Catalogue | 0..* | PT_Locale | Required if any localized entries are present in the Exchange Catalogue
+
+| Attribute | exchangeCatalogueDescription | Description of what the Exchange Catalogue contains | 0..1 | CharacterString |
+
+| Attribute | exchangeCatalogueComment | Any additional Information | 0..1 | CharacterString |
+
+| Attribute | certificates | Signed public key certificates referred to by digital signatures in the Exchange Set | 0..* | S100_SE_CertificateContainerType | Content defined in <<IHO_S_100,part=15>>. All certificates used, except the SA root certificate (installed separately by the implementing system) shall be included
+
+| Attribute | dataServerIdentifier | Identifies the data server for the permit | 0..1 | CharacterString |
+
+| Role | datasetDiscoveryMetadata | Exchange Catalogues may include or reference discovery metadata for the datasets in the Exchange Set | 0..* | Aggregation S100_DatasetDiscoveryMetadata |
+
+| Role | catalogueDiscoveryMetadata | Metadata for Catalogue | 0..* | Aggregation S100_CatalogueDiscoveryMetadata | Metadata for the Feature, Portrayal and Interoperability Catalogues, if any
+
+| Role | supportFileDiscoveryMetadata | Exchange Catalogues may include or reference discovery metadata for the support files in the Exchange Set | 0..* | Aggregation S100_SupportFileDiscoveryMetadata | The only support files allowed in S-104 are enumeration dictionaries and language packs for Feature Catalogues
+|===
+
+[[sec_12.2.2]]
+==== S100_ExchangeCatalogueIdentifier
+
+S-104 uses *S100_ExchangeCatalogueIdentifier* without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | S100_ExchangeCatalogueIdentifier | An Exchange Catalogue contains the discovery metadata about the exchange datasets and support files | - | - | The concatenation of identifier and dateTime form the unique name
+| Attribute | identifier | Uniquely identifies this Exchange Catalogue | 1 | CharacterString | *See <<note_12.2.2_1>> for the naming convention*
+| Attribute | dateTime | Creation date and time of the Exchange Catalogue, including time zone | 1 | DateTime | Format: yyyy-mm-ddThh:mm:ssZ
+
+|===
+
+[[note_12.2.2_1]]
+[NOTE,keep-separate=true]
+====
+Use the file name component of the dataset according to the convention in <<sec_11.2.3>>. For example, if the dataset file is named 104ABCDXYZ_1_20_20210420.h5 the metadata identifier should be 104ABCDXYZ_1_20_20210420. In the event of an Exchange Set containing multiple datasets, use the name of the dataset of largest extent with a "+N" suffix (without quotes), where N is the number of additional datasets in the Exchange Set. If the Exchange Set contains only Feature and/or Portrayal Catalogues, use 104ABCD+N where "ABCD" is the 4-character code of the producer of the Feature or Portrayal Catalogue.
+====
+
+[[sec_12.2.3]]
+==== S100_CataloguePointofContact
+
+S-104 uses *S100_CataloguePointOfContact* without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_CataloguePointOfContact | Contact details of the issuer of this Exchange Catalogue | - | - | -
+| Attribute | organization | The organization distributing this Exchange Catalogue | 1 | CharacterString | This could be an individual producer, value added reseller, etc
+| Attribute | phone | The phone number of the Organization | 0..1 | CI_Telephone |
+| Attribute | address | The address of the Organization | 0..1 | CI_Address |
+|===
+
+[[sec_12.2.4]]
+==== S100_DatasetDiscoveryMetadata
+
+Data in the Discovery Metadata are used to identify the relevance of the dataset to the particular application. S-104 restricts the multiplicity and contents of *S100_DatasetDiscoveryMetadata* as described in the Remarks column.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_DatasetDiscoveryMetadata | Metadata about the individual datasets in the Exchange Catalogue | - | - | *The optional S-100 attributes _updateNumber_, _updateApplicationDate_, _otherLocale_, and _referenceID_ are not used in S-104* +
+*The optional S-100 attributes _datasetID_ _dataCoverage_, and _editionNumber_ are mandatory in S-104*
+| Attribute | fileName | Dataset file name | 1 | URI | See <<IHO_S_100,part=1,clause=1-4.6>>
+| Attribute | description | Short description giving the area or location covered by the dataset | 0..1 | CharacterString | For example a harbour or port name, between two named locations etc
+| Attribute | datasetID | Dataset ID expressed as a Maritime Resource Name | *1* | URN | The URN must be an MRN *Made mandatory in S-104* See <<sec_11.2.3.1>>
+| Attribute | compressionFlag | Indicates if the resource is compressed | 1 | Boolean | _true_ indicates a compressed dataset resource +
+_false_ indicates an uncompressed dataset resource
+| Attribute | dataProtection | Indicates if the data is encrypted | 1 | Boolean | _true_ indicates an encrypted dataset resource +
+_false_ indicates an unencrypted dataset resources
+| Attribute | protectionScheme | Specification of method used for data protection | 0..1 | S100_ProtectionScheme | In S-100 the only allowed value is "S100p15"
+| Attribute | digitalSignatureReference | Specifies the algorithm used to compute digitalSignatureValue | 1 | S100_SE_DigitalSignatureReference (see <<IHO_S_100,part=15>>) |
+| Attribute | digitalSignatureValue | Value derived from the digital signature | 1..* | S100_SE_DigitalSignature (see <<IHO_S_100,part=15>>) | The value resulting from application of _digitalSignatureReference_ Implemented as the digital signature format specified in Part 15 +
+*At least one S100_SE_SignatureOnData is required*
+| Attribute | copyright | Indicates if the dataset is copyrighted | 1 | Boolean | _true_ indicates the resource is copyrighted _false_ Indicates the resource is not copyrighted +
+| Attribute | classification | Indicates the security classification of the dataset | 0..1 | MD_SecurityConstraints> MD_ClassificationCode (codelist) | 1. unclassified2. restricted3. confidential4. secret5. top secret6. sensitive but unclassified7. for official use only8. protected9. limited distributionRecommended for datasets intended for use on ECDIS (with expected classification as "unclassified")
+| Attribute | purpose | The purpose for which the dataset has been issued | 0..1 | S100_Purpose |
+| Attribute | notForNavigation | Indicates the dataset is not intended to be used for navigation | 1 | Boolean | _true_ indicates the dataset is not intended to be used for navigation +
+_false_ indicates the dataset is intended to be used for navigation
+| Attribute | specificUsage | The use for which the dataset is intended | 0..1 | MD_USAGE>specificUsage (character string) | Information about specific usage(s) for which the dataset is intended
+| Attribute | editionNumber | The Edition number of the dataset | *1* | Integer
+| *Mandatory in S-104* +
+See <<sec_8.2>>
+| Attribute | issueDate | Date on which the data was made available by the Data Producer | 1 | Date |
+| Attribute | issueTime | Time of day at which the data was made available by the Data Producer | 0..1 | Time | *Mandatory when the interval between datasets is shorter than 1 day, such as 6-hourly forecasts*
+| Attribute | boundingBox | The extent of the dataset limits | 0..1 | EX_GeographicBoundingBox |
+| Attribute | temporalExtent | Specification of the temporal extent of the dataset | 0..1 | S100_TemporalExtent | The temporal extent is encoded as the date/time of the earliest and latest data records (in coverage datasets) or date/time ranges (in vector datasets)If there is more than one feature in a dataset, the earliest and latest time values of records in all features are used, which means the earliest and latest values may be from different featuresIf date/time information for a feature is not encoded in the dataset, it is treated for the purposes of this attribute as extending indefinitely in the appropriate direction on the time axis, limited by the issue date/time or the cancellation or supersession of the datasetThis attribute is encoded if and only if at least one of the start and end of the temporal extent is known
+| Attribute | productSpecification | The product specification used to create this dataset | 1 | S100_ProductSpecification |
+| Attribute | producingAgency | Agency responsible for producing the data | 1 | CI_ResponsibleParty>CI_Organisation | See <<IHO_S_100,part=17>>
+| Attribute | producerCode | The official IHO Producer Code from S-62 | 0..1 | CharacterString | Recommended for datasets intended for use on ECDIS
+| Attribute | encodingFormat | The encoding format of the dataset | 1 | S100_EncodingFormat | *Must be HDF5*
+| Attribute | dataCoverage | Area covered by the dataset | *1..* | S100_DataCoverage | *Mandatory in S-104*
+| Attribute | comment | Any additional information | 0..1 | CharacterString |
+| Attribute | defaultLocale | Default language and character set used in the dataset | 0..1 | PT_Locale |
+| Attribute | metadataPointOfContact | Point of contact for metadata | 0..1 | CI_Responsibility > CI_Individual or CI_Responsibility > CI_Organisation | Only if metadataPointOfContact is different from producingAgency
+| Attribute | metadataDateStamp | Date stamp for metadata | 0..1 | Date | May or may not be the issue date
+| Attribute | replacedData | Indicates if a cancelled dataset is replaced by another data file(s) | 0..1 | Boolean
+| See Note +
+*Mandatory when purpose = cancellation*
+| Attribute | dataReplacement | Dataset name | 0..* | CharacterString
+| A dataset may be replaced by 1 or more datasetsSee Note +
+*Mandatory when replacedData = true*
+| Attribute | navigationPurpose | Classification of intended navigation purpose (for Catalogue indexing purposes) | 0..3 | S100_NavigationPurpose
+| *Mandatory when _notForNavigation_ = _false_*
+| Role | resourceMaintenance | Information about the frequency of resource updates, and the scope of those updates | 0..1 | MD_MaintenanceInformation | S-100 restricts the multiplicity to 0..1 and adds specific restrictions on the ISO 19115 structure and content. See clause *MD_MaintenanceInformation* in <<IHO_S_100,part=17>> +
+Format: PnYnMnDTnHnMnS (XML built-in type for ISO 8601 duration). See <<IHO_S_100,part=17,clause=17-4.9>> for encoding guidanceIf present, the duration must match the duration encoded in embedded metadata (<<table_12-1>>)
+|===
+
+[NOTE,keep-separate=true]
+====
+_replacedData_ and _dataReplacement_: The intended use of the attributes replacedData and dataReplacement could be, for example, to provide a mechanism for service providers to build automation when providing replacement data sets to customers within existing subscription periods.
+====
+
+[[sec_12.2.5]]
+==== S100_NavigationPurpose
+
+[cols="75,154,250,50,345",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S100_NavigationPurpose | The Navigational Purpose of the dataset  | - |
+| Value       | port                   | For port and near shore operations       | 1 |
+| Value       | transit                | For coast and planning purposes          | 2 |
+| Value       | overview               | For ocean crossing and planning purposes | 3 |
+|===
+
+[[sec_12.2.6]]
+==== S100_DataCoverage
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_DataCoverage | A spatial extent where data is provided; and the display scale information for the provided data | - | - | *The S-100 attributes _optimumDisplayScale_, _minimumDisplayScale_, _maximumDisplayScale_, and _temporalExtent_ are not used.*
+| Attribute | boundingPolygon | A polygon which defines the actual data limit | 1 | EX_BoundingPolygon | *See the Notes below this Table*
+| Attribute | approximateGridResolution | The resolution of gridded or georeferenced data (in metres) | *1..* | Real | A single value may be provided when all axes have a common resolution +
+For multiple value provision, use axis order as specified in datasetMay be approximate for ungeorectified data +
+For example, for 5 metre resolution, the value 5 must be encoded +
+*Mandatory for S-104*
+|===
+
+[NOTE,keep-separate=true]
+====
+If there are multiple grid features in the dataset, each feature should have a separate _dataCoverage_ attribute in dataset discovery metadata, except that the coverages for intersecting or adjacent features with the same grid resolution may be combined at Producer discretion.
+====
+
+NOTE: Bounding polygons for grid features should be the same as the spatial extent of the grid.
+
+NOTE: A boundingPolygon is restricted to a single GML Polygon with one exterior and 0 or more interiors expressed as Linear Rings using SRS EPSG:4326. The exterior and optional interiors shall be composed of a closed sequence of >=4 coordinate positions expressed individually or as a list (posList). The GML polygon shall have a valid GML identifier.
+
+NOTE: For _approximateGridResolution_, if the grid cell size varies over the extent of the grid, an approximated value based on model parameters or production metadata should be used.
+
+[[sec_12.2.7]]
+==== S100_Purpose
+
+[cols="10,17,33,6,34",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S100_Purpose | The purpose of the dataset                   | - | See <<sec_8.2>>. *The S-100 values update, reissue and delta are not used*
+| Value       | newDataset   | Brand new dataset                            | 1 | No data has previously been produced for this area
+| Value       | newEdition   | New Edition of the dataset or Catalogue      | 2 | Includes new information which has not been previously distributed by updates
+| Value       | cancellation | Dataset or Catalogue that has been cancelled | 5 | Indicates the dataset or Catalogue should no longer be used and can be deleted
+|===
+
+[[sec_12.2.8]]
+==== S100_TemporalExtent
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class     | S100_TemporalExtent | Temporal extent                                 | --   |
+| At least one of the _timeInstantBegin_ and _timeInstantEnd_ attributes must be populated; if both are known, both must be populated. The absence of either begin or end indicates indefinite validity in the corresponding direction, limited by the issue date/time or the cancellation or supersession of the dataset
+| Attribute | timeInstantBegin    | The instant at which the temporal extent begins | 0..1 | DateTime |
+| Attribute | timeInstantEnd      | The instant at which the temporal extent ends   | 0..1 | DateTime |
+|===
+
+[NOTE,keep-separate=true]
+====
+. In case of overlap in temporal extent between predecessor and successor datasets, the successor dataset prevails. For example, water level or weather forecast datasets may have a temporal extent of N days or hours, but be replaced by new forecast at N - X.
+. Precedence and succession can be determined from information in dataset discovery metadata (in particular, issue date, time and temporal extent).
+====
+
+[[sec_12.2.9]]
+==== S100_EncodingFormat
+
+[cols="9,18,31,7,35",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_EncodingFormat | Encoding format                             | - | *Only the HDF5 format is used in S-104*
+| Value       | HDF5                | The HDF5 data format as defined in Part 10c | 3 |
+|===
+
+[[sec_12.2.10]]
+==== S100_ProductSpecification
+
+S-104 uses S100_ProductSpecification without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | S100_ProductSpecification | The Product Specification contains the information needed to build the specified product | - | - | *The optional S-100 attributes _name_, _version_ and _compliancyCategory_ are mandatory in S-104*
+| Attribute | name | The name of the Product Specification used to create the datasets | *1* | CharacterString | The name in the Product Specification Register, in the IHO Geospatial Information (GI) Registry. **For S-104, this is "Water Level Information for Surface Navigation"** +
+*Mandatory in S-104*
+| Attribute | version | The version number of the Product Specification | *1* | CharacterString | For example 2.0.0 for S-104 Edition 2.0.0 +
+**Mandatory in S-104**
+| Attribute | date | The version date of the Product Specification | 0..1 | Date | From the Product Specification Register of the IHO GI Registry. For interim drafts use the version date in Product Specification Metadata
+| Attribute | productIdentifier | Machine readable unique identifier of a product type | 1 | CharacterString(Restricted to Product ID values from the IHO Product Specification Register, in the IHO GI Registry) | *For S-104 this must be the string "S-104" (without quotes)*
+| Attribute | number | The number used to lookup the product in the Product Specification Register of the IHO GI Registry | 1 | Integer | From the Product Specification Register in the IHO GI RegistryEncode as "0" until this Edition is added to the GI Registry and receives a Registry number. Do not use the number of any other Edition
+| Attribute | compliancyCategory | The level of compliance of the Product Specification to S-100 | *1* | S100_CompliancyCategory | See <<IHO_S_100,part=4a,clause=4a-5.5>> and clause 7.6 in this Product Specification +
+*Mandatory in S-104*
+|===
+
+[[sec_12.2.11]]
+==== S100_CompliancyCategory
+
+S-104 uses only Category 4 as defined in <<IHO_S_100,part=4a,clause=4a-5.5>>.
+
+[cols="9,18,38,10,26",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S100_CompliancyCategory |                                                | - | *S-104 2.0.0 is compliant with category4*
+| Value       | category4               | IHO S-100 and IMO harmonized display compliant | 4 |
+|===
+
+[[sec_12.2.12]]
+==== S100_ProtectionScheme
+
+S-104 uses S100_ProtectionScheme without modification.
+
+[cols="9,18,31,7,35",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S100_ProtectionScheme | Data protection schemes | - | -
+| Value       | S100p15               | IHO S-100 Part 15       | - | See <<IHO_S_100,part=15>>
+|===
+
+[[sec_12.2.13]]
+==== S100_SupportFileDiscoveryMetadata
+
+The only support files in S-104 are enumeration dictionaries and language packs for Feature Catalogues.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult. h| Type h| Remarks
+
+| Class | S100_SupportFileDiscoveryMetadata | Metadata about the individual support files in the Exchange Catalogue | - | - | *S-104 does not use* *_otherDataTypeDescription_*
+| Attribute | fileName | Name of the support file | 1 | URI | See <<IHO_S_100,part=1,clause=1-4.6>> and clause 11.2.5 in this Product Specification
+| Attribute | revisionStatus | The purpose for which the support file has been issued | 1 | S100_SupportFileRevisionStatus | For example new, replacement, etc
+| Attribute | editionNumber | The Edition number of the support file | 1 | Integer | See <<sec_8.2.6>>
+| Attribute | issueDate | Date on which the data was made available by the Data Producer | 0..1 | Date | Date on which the support file was made available by its Producer
+| Attribute | supportFileSpecification | The Specification used to create this file | 0..1 | S100_SupportFileSpecification |
+| Attribute | dataType | The format of the support file | 1 | S100_SupportFileFormat |
+| Attribute | comment | Optional comment | 0..1 | CharacterString |
+| Attribute | compressionFlag | Indicates if the resource is compressed | 1 | Boolean | _true_ indicates a compressed resource +
+_false_ indicates an uncompressed resource
+| Attribute | digitalSignatureReference | Specifies the algorithm used to compute digitalSignatureValue | 1 | S100_SE_DigitalSignatureReference(see <<IHO_S_100,part=15>>) | (Type corrected to conform to <<IHO_S_100,part=15>>)
+| Attribute | digitalSignatureValue | Value derived from the digital signature | 1..* | S100_SE_DigitalSignature(see <<IHO_S_100,part=15>>) | The value resulting from application of digitalSignatureReferenceImplemented as the digital signature format specified in <<IHO_S_100,part=15>>
+| Attribute | defaultLocale | Default language and character set used in the support file | 0..1 | PT_Locale | In absence of defaultLocale the language is English in UTF-8A support file is expected to use only one as locale. Additional support files can be created for other locales
+| Attribute | supportedResource | Identifier of the resource supported by this support file | 0..* | CharacterString | Conventions for identifiers are still to be developed in S-100. S-100 allows file URI, digital signature or cryptographic hash checksums to be used. +
+*In the interim, S-104 language packs will reference the Feature Catalogue. For enumeration dictionaries, use the Product Specification identifier and version in URI form*
+| Attribute | resourcePurpose | The purpose of the supporting resource | 0..1 | S100_ResourcePurpose | Identifies how the supporting resource is used
+|===
+
+[[sec_12.2.14]]
+==== S100_SupportFileFormat
+
+[cols="9,18,31,7,35",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_SupportFileFormat | The format used for the support file | -
+| *S-104 uses only XML*; language packs and enumeration dictionaries are all XML files
+| Value | XML | Extensible Markup Language | 4 |
+|===
+
+[[sec_12.2.15]]
+==== S100_SupportFileRevisionStatus
+
+S-104 uses S100_SupportFileRevisionStatus without modification.
+
+[cols="9,20,29,7,35",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_SupportFileRevisionStatus | The reason for inclusion of the support file in this Exchange Set | - | -
+| Value | new | A file which is new | 1 | Signifies a new file
+| Value | replacement | A file which replaces an existing file | 2 | Signifies a replacement for a file of the same name
+| Value | deletion | Deletes an existing file | 3 | Signifies deletion of a file of that name
+
+|===
+
+[[sec_12.2.16]]
+==== S100_SupportFileSpecification
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | S100_SupportFileSpecification | The Standard or Specification to which a support file conforms | - | - | -
+| Attribute | name | The name of the Specification used to create the support file | 1 | CharacterString | S-100 for language packs and enumeration dictionary
+| Attribute | version | The version number of the Specification | 0..1 | CharacterString | Use the applicable edition of the Standard in the _name_ attributeFor example, "5.0.0" for language packs conforming to S-100 Edition 5.0.0
+| Attribute | date | The version date of the Specification | 0..1 | Date | Omit or use the publication date in the GI Registry
+|===
+
+[[sec_12.2.17]]
+==== S100_ResourcePurpose
+
+[cols="9,18,33,6,35",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_ResourcePurpose | Defines the purpose of the supporting resource | - | *S-104 allows only language packs and enumeration dictionaries as support files and the allowed values of the S-100 enumeration are restricted accordingly*
+| Value | languagePack | A Language pack | 3 |
+| Value | other | A type of resource not otherwise described | 100 | *For an enumeration dictionary, which supports all datasets for a particular version of the Product Specification*
+|===
+
+[[sec_12.2.18]]
+==== S100_CatalogueDiscoveryMetadata
+
+S-104 uses S100_CatalogueDiscoveryMetadata without modification.
+This class is used to provide metadata about Feature Catalogues.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | S100_CatalogueDiscoveryMetadata | Class for S-100 Catalogue metadata | - | - | -
+| Attribute | fileName | The name for the Catalogue | 1 | URI | See <<IHO_S_100,part=1,clause=1-4.6>>
+| Attribute | purpose | The purpose for which the Catalogue has been issued | 0..1 | S100_Purpose(codelist) | The values must be one of the following:_2_ new edition _5_ cancellationDefault is new edition
+| Attribute | editionNumber | The Edition number of the Catalogue | 1 | Integer | Initially set to 1 for a given productSpecification.numberIncreased by 1 for each subsequent New EditionUniquely identifies the version of the Catalogue
+| Attribute | scope | Subject domain of the Catalogue | 1 | S100_CatalogueScope |
+| Attribute | versionNumber | The version identifier of the Catalogue | 1 | CharacterString | Human readable version identifier
+| Attribute | issueDate | The issue date of the Catalogue | 1 | Date |
+| Attribute | productSpecification | The Product Specification used to create this file | 1 | S100_ProductSpecification |
+| Attribute | digitalSignatureReference | Specifies the algorithm used to compute digitalSignatureValue | 1 | S100_SE_DigitalSignatureReference(see <<IHO_S_100,part=15>>) |
+| Attribute | digitalSignatureValue | Value derived from the digital signature | 1..* | S100_SE_DigitalSignature(see <<IHO_S_100,part=15>>) | The value resulting from application of _digitalSignatureReference_ +
+Implemented as the digital signature format specified in <<IHO_S_100,part=15>>
+| Attribute | compressionFlag | Indicates if the resource is compressed | 1 | Boolean | _true_ indicates a compressed resource +
+_false_ indicates an uncompressed resource
+| Attribute | defaultLocale | Default language and character set used in the Catalogue | 0..1 | PT_Locale | In absence of _defaultLocale_ the language is English in UTF-8
+| Attribute | otherLocale | Other languages and character sets used in the Catalogue | 0..* | PT_Locale | 
+|===
+
+[[sec_12.2.19]]
+==== S100_CatalogueScope
+
+[cols="5",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_CatalogueScope | The scope of the Catalogue | -
+| *S-104 exchange sets do not contain Interoperability or portrayal Catalogues and the corresponding values are removed*
+| Value | featureCatalogue | S-100 Feature Catalogue | 1 | 
+|===
+
+[[sec_12.2.20]]
+==== MD_MaintenanceInformation
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | MD_MaintenanceInformation | Information about the scope and frequency of updating | - | -
+a| S-100 restricts the ISO 19115-class to:
+
+* Prohibit _maintenanceScope_, _maintenanceNote_, and contact attributes;
+* Define restrictions on _maintenanceAndUpdateFrequency_, _maintenanceDate_, and _userDefinedMaintenanceFrequency_ attributes
+
+| Attribute | maintenanceAndUpdateFrequency | Frequency with which changes and additions are made to the resource after the initial resource is completed | 0..1 | MD_MaintenanceFrequencyCode (codelist) | Must be populated if _userDefinedMaintenanceFrequency_ is not present, otherwise optional. See Table *MD_MaintenanceFrequencyCode* in this clause for values allowed in S-100 metadata
+| Attribute | maintenanceDate | Date information associated with maintenance of the resource | 0..1 | CI_Date | Exactly one of _maintenanceDate_ and _userDefinedMaintenanceFrequency_ must be populatedAllowed value for _dateType_: _nextUpdate_
+| Attribute | userDefinedMaintenanceFrequency | Maintenance period other than those defined | 0..1 | TM_PeriodDuration | Exactly one of _maintenanceDate_ and _userDefinedMaintenanceFrequency_ must be populatedOnly positive durations allowed
+|===
+
+[[sec_12.2.21]]
+==== MD_MaintenanceFrequencyCode
+
+[cols="9,20,34,6,31",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | MD_MaintenanceFrequencyCode | Frequency with which modifications and deletions are made to the data after it is first produced | - | <<IHO_S_100>> is restricted to only the following values from the <<ISO_19115_1>> codelist. The conditions for the use of a particular value are described in its Remarks
+| Value | asNeeded | Resource is updated as deemed necessary | 1 | Use only for datasets which normally use a regular interval for update or supersession, but will have the next update issued at an interval different from the usualAllowed if and only if _userDefinedMaintenanceFrequency_ is not populated
+| Value | irregular | Resource is updated in intervals that are uneven in duration | 2 | Use only for datasets which do not use a regular schedule for update or supersessionAllowed if and only if _userDefinedMaintenanceFrequency_ is not populated
+
+|===
+
+[[sec_12.2.22]]
+==== PT_Locale
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | PT_Locale | Description of a locale | - | - | From <<ISO_19115_1>>
+| Attribute | language | Designation of the locale language | 1 | LanguageCode | ISO 639-2/T 3-letter language codes
+| Attribute | country | Designation of the specific country of the locale language | 0..1 | CountryCode | ISO 3166-2 2-letter country codes
+| Attribute | characterEncoding | Designation of the character set to be used to encode the textual value of the locale | 1 | MD_CharacterSetCode | UTF-8 is used in <<IHO_S_100>>
+|===
+
+_LanguageCode_, _CountryCode_ and _MD_CharacterSetCode_ are codelists which are defined in resource files within the S-100 XML schemas package and described in the documentation for the S-100 XML Schemas.
+
+[[sec_12.2.23]]
+==== S100_SE_CertificateContainer
+
+S-104 uses S100_SE_CertificateContainer without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+| Class | S100_SE_CertificateContainer | A set of signed public key certificates | - | - | Used in <<IHO_S_100,part=17>> Exchange Catalogues
+| Attribute | schemeAdministrator | The Scheme Administrator identity | 0..1 | CharacterString | The identity of the Scheme Administrator is contained in the "id" attribute of the _schemeAdminstrator_ element. The Scheme Adminstrator certificate is NOT included in catalogue metadata as it is independently verified by the implementing system
+| Attribute | certificate | A signed public key certificate | 1..* | Base 64 encoded Character String | Conforms to X.509 encoding. Contains a digitally signed identifier of an entity
+
+|===
+
+[[sec_12.2.24]]
+==== S100_SE_DigitalSignatureReference
+
+S-104 uses only the _ECDSA-384-SHA2_ value of S100_SE_DigitalSignatureReference,
+in conformity with the restriction in <<IHO_S_100,part=15>>, clauses 15-8.7 and 15-8.11.7.
+
+[cols="10,23,26,6,34",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S100_SE_DigitalSignatureReference | Algorithm used to compute the digital signature | - | Only ECDSA is currently used in implementations of S-100 for file based transfer of data to ECDIS. Other values are included for interoperability with other implementations by external standards. See <<IHO_S_100,part=15,clause=15-8.4>>
+| Value | ECDSA-384-SHA2 | | 8 | 384 bits ECDSA: SHA2-384
+|===
+
+[[sec_12.2.25]]
+==== S100_SE_DigitalSignature
+
+S-104 conforms to <<IHO_S_100,part=15,clause=15-8-11.4>>, which states: "The class S100_SE_DigitalSignature is realized as one of either S100_SE_SignatureOnData (a digital signature of a particular identified resource) or an additional digital signature defined using the [same class] which is either a S100_SE_SignatureOnData or S100_SE_SignatureOnSignature element as described in clause 15-8.8. <<IHO_S_100,part=17>> metadata thus allows for multiple digital signatures, a single mandatory S100_SE_SignatureOnData and any number of additional signatures, either of the data or other signatures." (In <<IHO_S_100>>, this class is not documented separately.)
+
+S-104 uses the class S100_SE_DigitalSignature without modification; however, in <<IHO_S_100>> exchange catalogues it is implemented by one of its subclasses S100_SE_SignatureOnData or S100_SE_SignatureOnSignature.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_SE_DigitalSignature | | - | Base64 encoded digital signature value
+| See <<IHO_S_100,part=15,clause=15-8>> Abstract class substituted by one of its subclasses.
+| Attribute | id | Identifier of the digital signature | 1 | CharacterString | Every signature entry has a unique identifier
+| Attribute | certificateRef | Signed Public Key | 1 | CharacterString | Identifier of the certificate against which the digital signature validates
+|===
+
+[[sec_12.2.26]]
+==== S100_SE_SignatureOnData
+
+S-104 uses S100_SE_SignatureOnData without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_SE_SignatureOnData | | - | Base64 encoded digital signature value
+| See <<IHO_S_100,part=15,clause=15-8>> Subclass of S100_SE_DigitalSignature
+| Attribute | id | Identifier of the digital signature | 1 | CharacterString | Every signature entry has a unique identifier(Inherited attribute)
+| Attribute | certificateRef | Signed Public Key | 1 | CharacterString | Identifier of the certificate against which the digital signature validates(Inherited attribute)
+| Attribute | dataStatus | The digital signature | 1 | DataStatus | 
+|===
+
+[[sec_12.2.27]]
+==== S100_SE_SignatureOnSignature
+
+S-104 uses S100_SE_SignatureOnSignature without modification.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | S100_SE_SignatureOnSignature | | - | Base64 encoded digital signature value
+| See <<IHO_S_100,part=15,clause=15-8>> Subclass of S100_SE_DigitalSignature
+| Attribute | id | Identifier of the digital signature | 1 | CharacterString | Every signature entry has a unique identifier(Inherited attribute)
+| Attribute | certificateRef | Signed Public Key | 1 | CharacterString | Identifier of the certificate against which the digital signature validates(Inherited attribute)
+| Attribute | signatureref | The digital signature referenced | 1 | |
+|===
+
+[[sec_12.2.28]]
+==== DataStatus
+
+S-104 uses the S-100 enumeration DataStatus defined in <<IHO_S_100,part=15>>
+without modification.
+
+[cols="10,17,33,6,34",options="unnumbered"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | DataStatus | The state of data when a digital signature is created | - |
+| Value | unencrypted | The data is unencrypted and uncompressed | - | For example, supporting resources
+| Value | encrypted | The data is compressed and encrypted | - | For example, copy protected datasets
+| Value | compressed. | The data is compressed only | - | For example, archives of multiple resources
+|===
+
+[[sec_12.2.29]]
+==== EX_GeographicBoundingBox
+
+From <<ISO_19115_1>>.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | EX_GeographicBoundingBox | Geographic position of the dataset | - | - | Defined in <<ISO_19115_1>>: Geographic position of the resource
+| Attribute | westBoundLongitude | Western-most coordinate of the limit of the dataset extent, expressed in longitude in decimal degrees (positive east) | 1 | Real | Arc degrees
+| Attribute | eastBoundLongitude | Eastern-most coordinate of the limit of the dataset extent, expressed in longitude in decimal degrees (positive east) | 1 | Real | Arc degrees
+| Attribute | southBoundLatitude | Southern-most coordinate of the limit of the dataset extent, expressed in latitude in decimal degrees (positive north) | 1 | Real | Arc degrees
+| Attribute | northBoundLatitude | Northern-most, coordinate of the limit of the dataset extent expressed in latitude in decimal degrees (positive north) | 1 | Real | Arc degrees
+|===
+
+NOTE: (from <<ISO_19115_1>>): This is only an approximate reference
+so specifying the Coordinate Reference System is unnecessary and need
+only be provided with a precision of up to two decimal places.
+
+[[sec_12.2.30]]
+==== EX_BoundingPolygon
+
+From <<ISO_19115_1>>.
+
+[cols="6",options="unnumbered"]
+|===
+h| Role Name h| Name h| Description h| Mult h| Type h| Remarks
+
+| Class | EX_BoundingPolygon | Boundary enclosing the dataset, expressed
+as the closed set of (x,y) coordinates of the polygon
+(last point replicates first point) | - | -
+| Defined in <<ISO_19115_1>>: enclosing geometric object which locates
+the resource, expressed as a set of (x,y) coordinate(s)
+| Attribute | polygon | Sets of points defining the bounding polygon
+| 1 | GM_Object | Must be a GML polygon with one exterior and 0 or
+more interiors expressed as Linear Rings using SRS EPSG:4326(See <<IHO_S_100,part=17>>)
+|===
+
+NOTE: (from <<ISO_19115_1>>): If a polygon is used it should be closed
+(last point replicates first point).
+
+[[sec_12.3]]
+=== Carrier Metadata
+
+The metadata for the S-104 product is divided in three sections, corresponding
+to the General Metadata (<<table_12-1>>), the Feature Type Metadata
+(<<table_12-2>>), and the Feature Instance Metadata (<<table_12-3>>
+and <<table_12-4>>). The Instance Metadata is subdivided into metadata
+attached to the instance as a whole (<<table_12-3>>) and metadata
+attached to individual values groups (<<table_12-4>>). Since these
+values do not reside in the Metadata blocks in the Exchange Catalogue,
+but are in the HDF5 files, they are referred to as Carrier Metadata.
+The Carrier Metadata consists of the data and parameters needed to
+read and interpret the information in the Water Level product even
+if the other S-104 Metadata files are unavailable.
+
+Note that in <<table_12-1;to!table_12-4>>, some of the metadata variables
+have restrictions on their core values (that is, whether they are
+optional or mandatory, the specific values allowed, etc) that are
+not imposed in <<IHO_S_100>>. These are grouped under the heading
+'_Additional restrictions on core metadata for S-104_'.
+
+Mandatory attributes in a section of a Table that is designated for
+one or more specified _dataCodingFormat_ values are mandatory only
+for the specified _dataCodingFormat_ value(s).
+
+It is suggested for any enumeration in S-104, to use unsigned integer
+types (preferably standard integer type H5T_STD_U8LE) for the base
+type of the numeric code when creating the enumeration
+footnote:[See the guidance on HDF5 datatypes
+(https://support.hdfgroup.org/HDF5/Tutor/datatypes.html, retrieved
+20 August 2021) for more information on the use of standard vs native
+types when creating a dataset and for memory operations (read/write).].
+
+Figures <<fig_12-5,droploc%>> through <<fig_12-9,droploc%>> depict
+the carrier metadata at each level of the structural hierarchy in
+an HDF5 dataset. The elements (groups and metadata) defined in <<IHO_S_100>>
+are distinguished from those defined in S-104 by prefix and shade.
+<<fig_12-5>> is a summary diagram depicting all levels of the structural
+and their associated metadata components for all the coverage types
+used in S-104. <<fig_12-6;to!fig_12-9>> show the details for each
+structural level and each coverage type.
+
+The same information as in Figures <<fig_12-5,droploc%>> through <<fig_12-9,droploc%>> is depicted in <<annexB>> (<<fig_B-5;to!fig_B-6>>) but organised by coverage instead of levels in the HDF5 structural hierarchy.
+
+The maximum length of all string HDF5 attributes is 300 characters.
+
+[[fig_12-5]]
+.Carrier metadata for the S-104 HDF5 group hierarchy
+image::figure-12-5.png["",565,500]
+
+[[fig_12-6]]
+.General metadata - Carrier metadata for the root group
+image::figure-12-6.png["",847,506]
+
+[[fig_12-7]]
+.Feature Type metadata - Carrier metadata for the Feature Container group
+image::figure-12-7.png["",871,402]
+
+[[fig_12-8]]
+.Feature Instance metadata - Carrier metadata for the Feature Instance group
+image::figure-12-8.png["",831,511]
+
+[[fig_12-9]]
+.Feature Instance metadata - Carrier metadata for the Values group in each Feature Instance group
+image::figure-12-9.png["",832,417]
+
+For all carrier metadata, latitude and longitude values are precise
+to stem:[10^{-7}] degrees except where noted. All times are in UTC
+format.
+
+All enumeration attributes in carrier metadata must be implemented
+as HDF5 enumerations. The base type for all enumeration attributes
+in the following tables must be 8-bit unsigned integer in the HDF5
+standard integer type H5T_STD_U8LE.
+
+Integer types are signed integers unless designated as "unsigned".
+
+Strings must use UTF-8 character encoding. String padding is not specified
+in this edition of the Product Specification due to the diversity
+of API framework treatment of padding.
+
+[[sec_12.3.1]]
+==== General metadata - details
+
+[[table_12-1]]
+.General metadata, related to the entire HDF5 file (see <<IHO_S_100,part=10c,table=10c-6>>). All times are in UTC format
+[cols="6"]
+|===
+h| No h| Name h| Camel Case h| Mult h| Data Type h| Remarks and/or Units
+
+| 1 | Product Specification number and version | productSpecification | 1 | String | This must be encoded as 'INT.IHO.S-104.X.Y', with X representing the Edition number and Y the revision number. See Note 6
+| 2 | Date of data product issue | issueDate | 1 | String | Date must be consistent with issueDate in discovery metadata
+| 3 | Horizontal Coordinate Reference System | horizontalCRS | 1 | Integer 32-bit | EPSG code (cf. clause 5.1)or -1 if user definedEXAMPLE 1: 4326 (for WGS84)EXAMPLE 2: EPSG:9057 is WGS 84 (G1762) realization with valid epoch 2005.0
+| 4 .4+| Bounding box | westBoundLongitude | 1 | Float 32-bit .4+| Area encompassing all feature instances Units are Decimal Degrees in the EPSG 4326 CS. In accordance with <<ISO_19115_1>> these coordinates need be accurate only to two decimal places
+| 5 | eastBoundLongitude | 1 | Float 32-bit
+| 6 | southBoundLatitude | 1 | Float 32-bit
+| 7 | northBoundLatitude | 1 | Float 32-bit
+| 8 | Geographic location of the resource (by description) | geographicIdentifier | 0..1 | String | Description, or location code from list agreed by data producers(In <<IHO_S_100>>: EX_Extent > EX_GeographicDescription.geographicIdentifier > MD_Identifier.code)
+| 9 | Name of the horizontal CRS | nameOfHorizontalCRS | 0..1 | String | Mandatory if horizontalCRS = -1
+| 10 | Type of the horizontal CRS | typeOfHorizontalCRS | 0..1 | Enumeration | Mandatory if horizontalCRS = -1 See <<table_12-5>>
+| 11 | Horizontal coordinate system | horizontalCS | 0..1 | Integer 32-bit
+a| Mandatory if horizontalCRS = -1Allowed values if typeOfHorizontalCRS = 1 (Geodetic CRS 2D):
+
+* 6422 (Lat, Lon - degree)
+Allowed values if typeOfHorizontalCRS = 2 (Projected CRS):
+
+* 4400 (Easting, Northing - metres)
+* 4500 (Northing, Easting - metres)
+
+| 12 | Horizontal datum | horizontalDatum | 0..1 | Integer 32-bit | Mandatory if horizontalCRS = -1EPSG code or -1 if user defined
+| 13 | Name of horizontal datum | nameOfHorizontalDatum | 0..1 | String | Mandatory if horizontalDatum = -1
+| 14 | Prime meridian | primeMeridian | 0..1 | Integer 32-bit | Mandatory if horizontalDatum = -1; EPSG Code
+| 15 | Spheroid | spheroid | 0..1 | Integer 32-bit | Mandatory if horizontalDatum = -1; EPSG Code
+| 16 | Projection method | projectionMethod | 0..1 | Integer 32-bit | Mandatory if typeOfHorizontalCRS = 2; EPSG Code, see <<table_12-7>>
+| 17 | Projection parameter 1 | projectionParameter1 | 0..1 | Float 64-bit | Only if projectionMethod is used. See <<table_12-7>>
+| 18 | Projection parameter 2 | projectionParameter2 | 0..1 | Float 64-bit | Only if projectionMethod is used. See <<table_12-7>>
+| 19 | Projection parameter 3 | projectionParameter3 | 0..1 | Float 64-bit | Only if projectionMethod is used. See <<table_12-7>>
+| 20 | Projection parameter 4 | projectionParameter4 | 0..1 | Float 64-bit | Only if projectionMethod is used. See <<table_12-7>>
+| 21 | Projection parameter 5 | projectionParameter5 | 0..1 | Float 64-bit | Only if projectionMethod is used. See <<table_12-7>>
+| 22 | False northing | falseNorthing | 0..1 | Float 64-bit | Only if projectionMethod is used. To be applied to the coordinates at axis Northing. [m]
+| 23 | False easting | falseEasting | 0..1 | Float 64-bit | Only if projectionMethod is used. To be applied to the coordinates at axis Easting. [m]
+| 24 | Epoch of realization | epoch | 0..1 | String | Code denoting the epoch of the geodetic datum used by the CRS. For example, 2005.0 for the G1762 realization of the geodetic datum for WGS84. Must match epoch denoted by horizontalCRS.
+6+| _Additional metadata for S-104_
+| 25 | Water level trend threshold | waterLevelTrendThreshold | 1 | Float 32-bit | Critical value used to determine steady water level trend. Units are metres/hour (m/hr). For example, 0.2. See Annex A (DCEG)
+| 26 | Dataset delivery interval | datasetDeliveryInterval | 0..1 | String | The expected time interval between availability of successive datasets for time-varying data. Must be formatted as PnYnMnDTnHnMnS (ISO 8601 duration). See Note 8
+| 27 | Trend Interval | trendInterval | 0..1 | Integer 32-bit unsigned | The interval over which trend at a particular time is calculatedUnit: minutes
+| 28 | Vertical datum epoch | verticalDatumEpoch | 0..1 | String | The period / epoch when the vertical datum was computed
+6+| _Additional restrictions on core general metadata for S-104_
+| 29 | Time of data product issue | issueTime | *1* | String | *Mandatory for S-104*. S-100 Time format. All times are in UTC. For example 123000Z
+| 30 | Vertical coordinate system | verticalCS | *1* | Integer 32-bit
+a| *Mandatory for S-104* +
+EPSG Code; Allowed Values
+
+* 6498 (Depth- Metres-Orientation Down)
+* 6499 (Height- Metres-Orientation Up)
+
+| 31 | Vertical coordinate base | verticalCoordinateBase | *1* | Enumeration | *Mandatory in S-104* +
+*The only allowed value is _verticalDatum_ (see <<IHO_S_100,table=10c-22>>)*
+| 32 | Vertical datum reference | verticalDatumReference | *1* | Enumeration
+| *Mandatory* beginning S-104 Edition 1.1 +
+1: S-100 vertical datum +
+2: EPSG
+
+| 33 | Vertical datum | verticalDatum | *1* | Integer 32-bit
+a| *Mandatory* beginning S-104 Edition 1.1
+If verticalDatumReference = 1 this is one of the standard values from S100_VerticalAndSoundingDatum +
+If verticalDatumReference = 2 this is an EPSG code for vertical datum
+|===
+
+[NOTE,keep-separate=true]
+====
+If the CRS is user defined only the following coordinate systems are
+supported:
+
+. Geodetic CS (Latitude, Longitude) - Degrees; and
+. Cartesian CS (Northing, Easting or Easting, Northing) - Metres.
+====
+
+NOTE: For the horizontal Datum all EPSG predefined Datums are allowed
+or any combination of predefined Prime Meridians or predefined Spheroids.
+
+NOTE: The projection methods are limited to those given in <<table_12-7>>.
+
+NOTE: If the horizontal CRS is defined by the EPSG code, the defined
+CRS should not use any other elements than the one allowed for user
+defined CRSs; (for example, no projection method that is not in the
+Table).
+
+NOTE: The bounding box is the data set bounding box; the coverage
+data feature instances may or may not cover the entire bounding box.
+If there is only a single coverage feature, its extent may or may
+not be the same as the data set.
+
+NOTE: Beginning S-100 Edition 5.0.0, class *S100_ProductSpecification*
+(<<IHO_S_100,part=17>>) contains a _productIdentifier_ field whose
+value must be the Product ID value from the IHO Product Specification
+Register in the IHO Geospatial Information Registry. Attribute
+_productSpecification_ in <<table_12-1>> must use exactly the same
+value.
+
+NOTE: S-104 does not use _seaSurface_ and _seaFloor_ datums. which
+makes attribute _verticalCoordinateBase_ redundant. It is included
+in order to ensure compliance with generic validation checks for attribute
+_verticalDatum_.
+
+NOTE: Dataset delivery interval is encoded only if the dataset is
+part of a sequence delivered at known intervals (for example, daily,
+weekly, or 6-hourly forecasts). <<IHO_S_100,part=17,clause=17-4.9>>
+contains detailed guidance for encoding the discovery metadata equivalent
+of this attribute (_userDefinedMaintenanceFrequency_) and the same
+guidelines apply to encoding this attribute. If this attribute and
+its discovery metadata equivalent are both encoded (in the HDF5 dataset
+and discovery metadata block respectively), the durations encoded
+by them must be the same. Intervals greater than monthly may be encoded
+at Producer discretion.
+
+[[sec_12.3.2]]
+==== Feature Type metadata - details
+
+[[table_12-2]]
+.Feature Type metadata, pertaining to the WaterLevel feature type (see <<IHO_S_100,part=10c,table=10c-10>>)
+[cols="6"]
+|===
+h| No h| Name h| Camel Case h| Mult h| Data Type h| Remarks and/or Units
+
+| 1 | Data organization index (Used to read the data. See <<table_10-1>>) | dataCodingFormat | 1 | Enumeration | See <<table_12-9>> . The allowed values are:2: Regularly-gridded arraysThis Product Specification allows the use of only value 2 from <<IHO_S_100>>
+
+| 2 | Dimension | dimension | 1 | Integer, 8-bit unsigned | The (spatial) dimension of the feature instances. For water levels, use 2This is the number of coordinate axes, not the rank of the HDF5 arrays storing coordinates or values
+
+| 3 | Common Point Rule | commonPointRule | 1 | Enumeration | The procedure used footnote:[The "procedure" referred to means only _evaluate_ operations as defined in <<ISO_19123_2005>> ("accept a DirectPosition as input and return a set of Records of feature attribute values for that direct position"). Applications must apply their own evaluation methods to the resulting list, for example, "water level adjustment" in ECDIS (S-98 Annex C) should select the water level value that produces the shoalest depth at the position.]
+for evaluating the coverage at a position that falls on the boundary or in an area of overlap between geometric objects1: average2: low3: high4: all (recommended)
+
+| 4 | Horizontal position uncertainty | horizontalPositionUncertainty | 1 | Float 32-bit | -1.0 (unknown) or positive value (m)
+
+| 5 | Vertical position uncertainty | verticalUncertainty | 1 | Float 32-bit | -1.0 (unknown) or positive value (m)
+
+| 6 | Time uncertainty | timeUncertainty | 0..1 | Float 32-bit | -1.0 (unknown) or positive value (s)
+
+| 7 | Number of feature instances | numInstances | 1 | Integer 32-bit unsigned |
+
+6+| _Additional metadata for S-104_
+| 8 | Methodology | methodWaterLevelProduct | 0..1 | String | Brief description of tide gauge type, forecast method or model, etc
+
+| 9 | Minimum water level height in dataset | minDatasetHeight | 1 | Float 32-bit | Height in verticalCS in <<table_12-1>> Use the same precision as the corresponding attribute in the values record
+
+| 10 | Maximum water level height in dataset | maxDatasetHeight | 1 | Float 32-bit | Height in verticalCS in <<table_12-1>> Use the same precision as the corresponding attribute in the values record
+6+| *dataCodingFormat = 2 (regular Grid)*
+
+| 11 .2+| Sequencing Rule | sequencingRule.type | 1 | Enumeration | Method to be used to assign values from the sequence of values to the grid coordinates. Components: +
+type: Enumeration CV_SequenceType +
+*Must be 1 (for 'linear')*
+
+| 12 | sequencingRule.scanDirection | 1 | String | scanDirection: String <axisNames entry> (comma-separated). For example "latitude,longitude"
+
+| 13 | Interpolation Type | interpolationType | 1 | Enumeration
+a| Interpolation method recommended for evaluation of the S100_GridCoverageValues: Only _nearestneighbor_ is allowed from the values in the <<IHO_S_100,part=8>> enumeration S100_CV_InterpolationMethod. 
+
+NOTE: This is not a recommendation for interpolation to be used by the data producer, but rather by an application reading S-104 data
+
+| 14 | Offset of data point in cell | dataOffsetCode | 0..1 | Enumeration | *Mandatory if data points are at grid cell centres.* See <<IHO_S_100>> clauses 10c-9.6 and 8-5.2.8. +
+The allowed values in S-104 are: +
+1: XMin, YMin ("Lower left") +
+5: Barycenter (centroid) of cellThe default is "Lower left" and this attribute may be omitted if data points are at cell lower-left corners. Other cell corners are not allowed.
+
+|===
+
+[[sec_12.3.3]]
+==== Feature Instance metadata - details
+
+[[table_12-3]]
+.Feature Instance metadata, pertaining to the feature instance (see <<IHO_S_100,part=10c,table=10c-12>>). All times are in UTC format
+[cols="6"]
+|===
+h| No h| Name h| Camel Case h| Mult h| Data Type h| Remarks and/or Units
+
+| 1 .4+| Bounding box | westBoundLongitude | 0..1 | Float 32-bit
+.4+a| Area of gridThe unit must conform to the CRS used for the dataset (for example, degrees for the geographic 2D CRS EPSG 4326; and metres for the UTM zone projected CRS EPSG 32710).
+
+These are used if the feature instance has a bounding box different from the bounding box of the whole dataset. This may happen, for example, if there is more than one feature instance in the dataset.
+
+If the grid extents for different feature instances overlap, the domain extent polygon must be provided instead.
+
+| 2 | eastBoundLongitude | 0..1 | Float 32-bit
+| 3 | southBoundLatitude | 0..1 | Float 32-bit
+| 4 | northBoundLatitude | 0..1 | Float 32-bit
+| 5 | Number of time records | numberOfTimes | 1 | Integer 32-bit unsigned | The total number of time records. +
+Mandatory in S-104. For water level adjustment to be non-trivial, there should be multiple time records (an acceptable minimum is undetermined at this time).
+| 6 | Time interval | timeRecordInterval | 0..1 | Integer 16-bit unsigned
+a| The interval between time records. Units: Seconds.
+
+Recommended if the interval between successive values is uniform.
+| 7 | Valid time of earliest value | dateTimeOfFirstRecord | 1 | String | DateTime format. First record in the Instance. All times are in UTCMandatory in S-104
+| 8 | Valid time of latest value | dateTimeOfLastRecord | 1 | String | DateTime formatMandatory in S-104.
+| 9 | Number of values groups | numGRP | 1 | Integer 32-bit unsigned | Number of Values Groups. For dataCodingFormat = 2 equals the number of time points given by numberOfTimes
+6+| _Additional metadata for S-104_
+| 10 | Data dynamicity | dataDynamicity | 1 | Enumeration | See <<table_12-10>>. The allowed values are:1: Observation2: Astronomical prediction3: Analysis or hybrid method5: Hydrodynamic model forecast
+| 11 | Vertical datum epoch | verticalDatumEpoch | 0..1 | String | The period / epoch when the vertical datum was computed
+6+| *dataCodingFormat = 2 (regular Grid)*
+| 12 | Longitude of grid origin | gridOriginLongitude | 1 | Float-Double (64-bit) | As per CRS
+| 13 | Latitude of grid origin | gridOriginLatitude | 1 | Float-Double (64-bit) | As per CRS
+| 14 | Grid spacing, longitudinal | gridSpacingLongitudinal | 1 | Float-Double (64-bit) | As per CRS
+| 15 | Grid spacing, latitudinal | gridSpacingLatitudinal | 1 | Float-Double (64-bit) | As per CRS
+| 16 | Number of points, longitudinal | numPointsLongitudinal | 1 | Integer 32-bit unsigned | numCOLS
+| 17 | Number of points, latitudinal | numPointsLatitudinal | 1 | Integer 32-bit unsigned | numROWS
+| 18 | Start sequence | startSequence | 1 | String
+| For example, "0,0" (without quotes) for scans starting at lower left corner i=0, j=0. For upper left, "0,n", where n is the value of numROWS-1. First character represents first axis in sequencingRule.scanDirection. (<<table_12-2>>), which for EPSG 4326 is latitude
+
+| 19 | Vertical datum reference | verticalDatumReference | 0..1 | Enumeration
+a| Mandatory if and only if the vertical datum of this instance differs
+from the datum in the root group, omitted if it is the same. +
+1: S-100 vertical datum +
+2: EPSG
+
+| 20 | Vertical datum | verticalDatum | 0..1 | Integer 32-bit
+a| Mandatory if and only if the vertical datum of this instance differs
+from that in the root group, omitted if it is the same.
+If verticalDatumReference = 1 this is one of the standard values from
+S100_VerticalAndSoundingDatum +
+If verticalDatumReference = 2 this is an EPSG code for vertical datum
+|===
+
+[[sec_12.3.4]]
+==== Values Group attributes - details
+
+An expanded new metadata block is required for the Values Groups (<<table_12-4>>) to add attributes for specifying the parameters used for calculating trend values.
+
+[[table_12-4]]
+.Values Group attributes (see <<IHO_S_100,part=10c,table=10c-19>>). All times are in UTC format
+[cols="6"]
+|===
+h| No h| Name h| Camel Case h| Mult h| Data Type h| Remarks and/or Units
+
+| 1 | Time stamp | timePoint | 1 | String | DateTime. All times are in UTC. See <<sec_10.2.2.5>>
+| 2 | Water level trend threshold | waterLevelTrendThreshold | 0..1 | Float 32-bit | Critical value used to determine steady water level trend. Units are metres/hour (m/hr). For example, 0.2. See <<annexA>> (DCEG)
+| 3 | Trend Interval | trendInterval | 0..1 | Integer 32-bit unsigned | The interval over which trend at a particular time is calculatedUnit: minutes. Default: 60 minutes
+
+|===
+
+[[sec_12.3.5]]
+==== Additional enumerations used in carrier metadata
+
+[[table_12-5]]
+.Type of the horizontal CRS
+[cols="67,114,303,30,49"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | typeOfHorizontalCRS | Codes for describing the type of the two-dimensional horizontal CRS | - |
+| Literal     | geodeticCRS2D       | Two-dimensional geodetic CRS                                        | 1 |
+| Literal     | projectedCRS        | Projected CRS                                                       | 2 |
+|===
+
+[[table_12-6]]
+.Vertical datum reference
+[cols="67,129,289,30,49"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | verticalDatumReference |                                                                            | - |
+| Literal     | s100VerticalDatum      | The vertical datum is one of those listed in S100_VerticalAndSoundingDatum | 1 |
+| Literal     | EPSG                   | The vertical datum is one of those listed in the EPSG Registry             | 2
+|===
+
+[[table_12-7]]
+.Projection methods and their parameters
+[cols="92,39,78,76,94,83,86"]
+|===
+h| Name h| EPSG Code h| Parameter 1 h| Parameter 2 h| Parameter 3 h| Parameter 4 h| Parameter 5
+
+| Mercator | 9805 | Latitude of 1st standard parallel | Longitude of natural origin | - | - | -
+| Transverse Mercator | 9807 | Latitude of natural origin | Longitude of natural origin | Scale factor at natural origin | - | -
+| Oblique Mercator | 9815 | Latitude of projection centre | Longitude of projection centre | Azimuth of initial line | Angle from Rectified to Skew Grid | Scale factor on initial line
+| Hotline Oblique Mercator | 9812 | Latitude of projection centre | Longitude of projection centre | Azimuth of initial line | Angle from Rectified to Skew Grid | Scale factor on initial line
+| Lambert Conic Conformal (1SP) | 9801 | Latitude of natural origin | Longitude of natural origin | Scale factor at natural origin | - | -
+| Lambert Conic Conformal (2SP) | 9802 | Latitude of false origin | Longitude of false origin | Latitude of 1st standard parallel | Latitude of 2nd standard parallel | -
+| Oblique Stereographic | 9809 | Latitude of natural origin | Longitude of natural origin | Scale factor at natural origin | - | -
+| Polar Stereographic | 9810 | Latitude of natural origin | Longitude of natural origin | Scale factor at natural origin | - | -
+| Krovak Oblique Conic Conformal | 9819 | Latitude of projection centre | Longitude of projection centre | Azimuth of initial line | Latitude of pseudo standard parallel | Scale factor on pseudo standard parallel
+| American Polyconic | 9818 | Latitude of natural origin | Longitude of natural origin | - | - | -
+| Albers Equal Area | 9822 | Latitude of false origin | Longitude of false origin | Latitude of 1st standard parallel5 | Latitude of 2nd standard parallel6 | -
+| Lambert Azimuthal Equal Area | 9820 | Latitude of natural origin | Longitude of natural origin | - | - | -
+|===
+
+[[table_12-8]]
+.S100_VerticalAndSoundingDatum
+[cols="10,28,25,8,29"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| S100_Codelist | S100_VerticalAndSoundingDatum | Allowable vertical and sounding datums | - | S-104 allows only the standard values of this codelist, which makes it effectively an enumeration for S-104 purposes. +
+The values seaFloor, seaSurface, and hydrographicZero are not used in S-104.
+| Value | meanLowWaterSprings               | | 1  | (MLWS)
+| Value | meanLowerLowWaterSprings          | | 2  | -
+| Value | meanSeaLevel                      | | 3  | (MSL)
+| Value | lowestLowWater                    | | 4  | -
+| Value | meanLowWater                      | | 5  | (MLW)
+| Value | lowestLowWaterSprings             | | 6  | -
+| Value | approximateMeanLowWaterSprings    | | 7  | -
+| Value | indianSpringLowWater              | | 8  | -
+| Value | lowWaterSprings                   | | 9  | -
+| Value | approximateLowestAstronomicalTide | | 10 | -
+| Value | nearlyLowestLowWater              | | 11 | -
+| Value | meanLowerLowWater                 | | 12 | (MLLW)
+| Value | lowWater                          | | 13 | (LW)
+| Value | approximateMeanLowWater           | | 14 | -
+| Value | approximateMeanLowerLowWater      | | 15 | -
+| Value | meanHighWater                     | | 16 | (MHW)
+| Value | meanHighWaterSprings              | | 17 | (MHWS)
+| Value | highWater                         | | 18 | (HW)
+| Value | approximateMeanSeaLevel           | | 19 | -
+| Value | highWaterSprings                  | | 20 | -
+| Value | meanHigherHighWater               | | 21 | (MHHW)
+| Value | equinoctialSpringLowWater         | | 22 | -
+| Value | lowestAstronomicalTide            | | 23 | (LAT)
+| Value | localDatum                        | | 24 | -
+| Value | internationalGreatLakesDatum1985  | | 25 | -
+| Value | meanWaterLevel                    | | 26 | -
+| Value | lowerLowWaterLargeTide            | | 27 | -
+| Value | higherHighWaterLargeTide          | | 28 | -
+| Value | nearlyHighestHighWater            | | 29 | -
+| Value | highestAstronomicalTide           | | 30 | (HAT)
+| Value | balticSeaChartDatum2000 | Baltic Sea Chart Datum 2000 | 44 | -
+| Value | internationalGreatLakesDatum2020 | The 2020 update to the International Great Lakes Datum, the official reference system used to measure water level heights in the Great Lakes, connecting channels, and the St Lawrence River system | 46 | Unlike the previous two IGLDs, this datum update will use a geoid-based vertical datum that will be accessible using global navigation satellite systems (GNSS) such as the Global Positioning System (GPS)
+|===
+
+[[table_12-9]]
+.S100_HDF_DataCodingFormat
+[cols="13,20,36,7,24"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+| Enumeration | S100_HDF_DataCodingFormat | Data coding formats for S-100 HDF5 data | - | S-104 does not use movingPlatform, irregularGrid, or variableCellSize data coding formats
+| Value | regularGrid | Data at grid points forming a regular grid with constant cell spacing | 2 | Regular grids are commonly composed of perpendicularly crossing lines of equal spacing on each dimension, creating square or rectangular cells
+|===
+
+[[table_12-10]]
+.S104_DataDynamicity
+[cols="13,24,33,7,24"]
+|===
+h| Item h| Name h| Description h| Code h| Remarks
+
+| Enumeration | S104_DataDynamicity | Classification of data according
+to the relationship between the time of its collection, generation,
+or calculation of generation parameters, in relation to the time of
+publication of the dataset | - |
+| Value | observation | Values from in-situ sensor(s); may be quality
+controlled and stored after collection | 1 | Only real-time observations +
+See also <<note_12_1;and!note_12_2>> below
+| Value | astronomicalPrediction | Values computed using harmonic analysis or other proven method of tidal analysis | 2 | IHO Resolution 3/1919, as amended
+| Value | analysisOrHybrid | Values calculated by statistical or other indirect methods, or a combination of methods | 3 | A hybrid method combines two or more approaches
+| Value | hydrodynamicForecast | Values calculated from a two- or
+three-dimensional dynamic simulation of future conditions using predicted
+data for boundary forcing, via statistical method or combination | 5
+| A forecast is a simulation made for many hours into the future using
+predicted winds, water levels, etc
+|===
+
+[[note_12_1]]
+NOTE: The time period covered by the observations should be encoded
+in the metadata attribute _temporalExtent_.
+
+[[note_12_2]]
+NOTE: Sensors (for example tide gauges deployed along a channel) are
+monitored by the data collecting Authority. After data acquisition,
+the data are quality controlled and stored by the Producing Authority.
+
+See <<sec_7.1>> for detailed descriptions of the types of water level
+data based on the time-dependence of the source.
+
+[[sec_12.4]]
+=== Language
+
+The language used for the Discovery Metadata and the Carrier Metadata
+is English. Producers may add translations of Feature Catalogues into
+additional languages using 'language packs'
+(cf. S-100 Part 18 and Part 11, clauses 11.2.4 - 11.2.5).

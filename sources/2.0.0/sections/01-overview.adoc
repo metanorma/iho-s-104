@@ -1,0 +1,984 @@
+
+[[sec_1]]
+== Overview
+
+S-104 is the Water Level Information for Surface Navigation Product
+Specification, produced by the IHO. This edition of S-104 is intended
+for use with the "water level adjustment" functionality described
+in IHO Publication <<IHO_S_98>>.
+
+The development of electronic navigation with high resolution bathymetric
+data, and the drive to increase safety of navigation are now demanding
+time-sensitive data. IHO has identified the requirement for a Product
+Specification for dynamic tidal and water level data.
+
+Tidal height information has traditionally been provided as high/low
+predictions; however, with increasing drafts and technology, there
+has been a move to hourly or more frequent predictions with major
+ports providing real-time water level information to their pilots
+and web-sites.
+
+In order to allow applications to dynamically adjust depths, there
+is a requirement for S-104 Edition 2.0.0 to supply water level data
+as gridded surface time-series data compatible with the IHO <<IHO_S_102>>
+(Bathymetric Surface) and <<IHO_S_101>> (Electronic Navigation Chart)
+data products.
+
+[[sec_1.1]]
+=== Introduction
+
+Tidal and water level predictions have been fundamental in route planning
+and entry to ports (SOLAS Chapter V). These have traditionally been
+supplied as a physical hard copy publication and recently as a separate
+software installation that may not be integrated with the ECDIS. New
+functionality is now being defined to integrate dynamic water level
+information into ECDIS. To improve safety of navigation, this product
+specification will ensure that tidal and water level data supplied
+for dynamic capability is consistent by all approved authorities.
+
+Annex C of IHO Publication <<IHO_S_98>> describes ECDIS functionality
+for combining dynamic water level information with bathymetric data
+to present ship's officers with a more accurate picture of water depth
+over an interval. Given the technological ability to generate short-term
+dynamic forecasts of water level information and communicate them
+to vessels more frequently, this allows provision of more timely and
+accurate look-ahead depth information which can be used for more accurate
+estimation of navigability and hazard assessment by ship's officers
+and watchstanders.
+
+[[sec_1.1.1]]
+==== Data types
+
+This edition of S-104 describes one data type that can be delivered
+to recipients such as ECDIS or other applications, either on board
+a vessel or in a shore installation:
+
+A time series of water level height relative to a vertical datum and
+water level trend. The data represent an array of points contained
+in a grid. Time and datum information are contained in the metadata.
+The primary purpose of this data type is to enable displays of dynamic
+depth information on ECDIS in combination with bathymetric data; another
+purpose is to update water depths for under-keel clearance management.
+
+[[sec_1.1.2]]
+==== Display
+
+This edition of S-104 is designed for a single means of displaying
+water level data to support navigation, route planning, and route
+monitoring:
+
+* Adjusted display of depths from datasets containing bathymetric
+data or electronic nautical chart information. This will be described
+in <<IHO_S_98,annex=C>>.
+
+[[sec_1.1.3]]
+==== Encoding
+
+There is one encoding of water level data:
+
+1. HDF5 (Hierarchical Data Format version 5) is used for encoding
+time series of water level heights and trends (and optionally, uncertainty)
+at an array of points in a grid. HDF5 promotes compatible data exchange
+due to its common neutral encoding format. HDF5 is object oriented
+and suitable for many types of data.
+
+<<table_1-1>> summarises Clauses <<sec_1.1.1,droploc%>> through <<sec_1.1.3,droploc%>>.
+
+[[table_1-1]]
+.S-104 data variables, formats, encoding and display.
+[cols="105,213,68,149"]
+|===
+h| Data Variable h| Data Format h| Encoding h| Display
+
+| Water level height
+.3+| Multiple Locations, Time Series (i.e., Gridded Forecast), as
+values records combining all attributes. .3+| HDF5 | According to
+data product with which S-104 data is combined, with depth values
+and uncertainties adjusted. For example, bathymetry coverage or ENC
+feature display with shade according to adjusted depth.
+| Water level trend | Not included in <<IHO_S_98,annex=C>> water level
+adjustment. Should be included in pick report if pick reports are
+implemented.
+| Uncertainty | Combined with uncertainty in data product with which
+S-104 data is combined.
+
+|===
+
+[[sec_1.2]]
+=== Scope
+
+This document describes an S-100 compliant Product Specification for
+the encapsulation and data transfer of tidal and water level data
+for use in an Electronic Chart Display and Information System (ECDIS)
+or any proposed dynamic tide application. This Product Specification
+includes the content model, the encoding, the feature catalogue and
+metadata. The water level product may be used either alone or combined
+with other S-100 compatible data.
+
+[[sec_1.3]]
+=== References
+
+[[sec_1.3.1]]
+[bibliography]
+==== Normative
+
+* [[[HDF5,HDF5]]] Hierarchical Data Format version 5 -_ http://www.hdfgroup.org/[_www.hdfgroup.org_]
+
+* [[[M-3,M-3]]] _Resolutions of the International Hydrographic Organization, IHO Publication M-3,_ 2^nd^ Edition, 2010 (updated July 2023)
+
+* [[[Res_3_1919,Res. 3/1919]]] IHO Resolution 3/1919 (as amended), IHO Publication M-3
+
+* [[[S-44,IHO S-44]]] _IHO Standards for Hydrographic Surveys,_ Edition 6.1.0, October 2022
+
+* [[[IHO_S_62,IHO S-62]]] List of Data Producer Codes (online), IHO GI registry, URL: https://registry.iho.int
+
+* [[[IHO_S_97,IHO S-97]]] _IHO Guidelines for Creating S-100 Product Specifications_, Edition 1.1.0, June 2020
+
+* [[[IHO_S_98,IHO S-98]]] _Data Product Interoperability in S-100 Navigation Systems_, Edition 2.0.0. In preparation
+
+* [[[IHO_S_100,IHO S-100]]] _IHO Universal Hydrographic Data Model_, Edition 5.2.0, June 2024
+
+* [[[IHO_S_158,IHO S-158]]] S-100 Validation Checks. In preparation
+
+* [[[IHO_S_158_100,IHO S-158:100]]] Validation Checks (Universal Hydrographic Data Model). In preparation
+
+* [[[IHO_S_158_104,IHO S-158:104]]] Validation Checks (Water Level Information for Surface Navigation). In preparation
+
+* [[[IHO_S_158_98,IHO S-158:98]]] Validation Checks (Interoperability). In preparation
+
+NOTE: Titles and numbers for publications in preparation are provisional pending publication by the IHO.
+
+[[sec_1.3.2]]
+[bibliography]
+==== Informative
+
+* [[[IALA_G1143,IALA G1143]]] _Unique Identifiers for Maritime Resources_, Edition 3.0. International Association of Marine Aids to Navigation and Lighthouse Authorities, June 2021
+
+* [[[IOC_14_4,IOC 14-4]]] _Manual on Sea-level Measurements and Interpretation, Volume IV : An update to 2006. Paris,_ Intergovernmental Oceanographic Commission of UNESCO. (IOC Manuals and Guides No.14, vol. IV; JCOMM Technical Report No.31; WMO/TD. No. 1339)
+
+* [[[ISO_3166_1_1997,ISO 3166-1:1997]]] _Country Codes_
+
+* [[[ISO_8601_2004,ISO 8601:2004]]] _Data elements and interchange formats - Information interchange - Representation of dates and times_
+
+* [[[ISO_TS_19103_2005,ISO/TS 19103:2005]]] _Geographic information - Conceptual schema language_
+
+* [[[ISO_19111_2003,ISO 19111:2003]]] _Geographic information - Spatial referencing by coordinates_
+
+* [[[ISO_19115_1,ISO 19115-1]]] _Geographic information - Metadata - Part 1 - Fundamentals_. As amended by Amendment 1, 2018
+
+* [[[ISO_19115_2_2009,ISO 19115-2:2009]]] _Geographic information - Metadata: Extensions for imagery and gridded data_
+
+* [[[ISO_19115_3,ISO 19115-3]]] _Geographic information - Metadata - XML schema implementation for fundamental concepts_, 2016
+
+* [[[ISO_19123_2005,ISO 19123:2005]]] _Geographic information - Schema for coverage geometry and functions_
+
+* [[[ISO_19129_2009,ISO 19129:2009]]] _Geographic information - Imagery gridded and coverage data framework_
+
+* [[[ISO_19131_2007,ISO 19131:2007]]] _Geographic information - Data product specifications_
+
+* [[[ISO_19157_2013,ISO 19157:2013]]] _Geographic information - Data Quality._ As amended by Amendment 1, 2018
+
+* [[[ISO_IEC_19501_1_and_19505_2,ISO/IEC 19501-1 and 19505-2]]] _Information technology — Open Distributed Processing - Unified Modelling Language Version 2.4.1_
+
+* [[[netCDF,netCDF]]] _Network Common Data Form Unidata_ - URL: http://www.unidata.ucar.edu/software/netcdf[www.unidata.ucar.edu/software/netcdf]
+
+* [[[NGA_2021,NGA 2021]]] _Recent Update to WGS 84 Reference Frame and NGA Transition to IGS ANTEX_, NGA Office of Geomatics / GNSS Division, St. Louis, National Geospatial-Intelligence Agency, 2021.
+
+* [[[NGA_2023,NGA 2023]]] _WGS 84 (G2296) Terrestrial Reference Frame Realization_, Office of Geomatics, National Geospatial-Intelligence Agency, NGA-U-2023-02846, 2023.
+
+* [[[RFC_3986,RFC 3986]]] _Uniform Resource Identifier (URI): Generic Syntax. T. Berners-Lee, R. Fielding, L. Masinter. Internet Standard 66,_ IETF. URL: http://www.ietf.org/rfc/rfc3986.txt or http://www.rfc-editor.org/info/std66
+
+* [[[RFC_2141,RFC 2141]]] _URN Syntax. R. Moats. IETF RFC 2141, May 1997._ URL: http://www.rfc-editor.org/info/rfc2141
+
+* [[[IHO_S_101,IHO S-101]]] _IHO Electronic Navigational Chart Product Specification_, Edition 1.2.0 (in preparation)
+
+* [[[IHO_S_32,IHO S-32]]] _International Hydrographic Dictionary_. URL: http://iho-ohi.net/S32/index.php
+
+* [[[IHO_S_102,IHO S-102]]] _IHO Bathymetric Surface Product Specification_, Edition 3.0 (in preparation)
+
+* [[[IHO_S_111,IHO S-111]]] _IHO Surface Currents Product Specification_, Edition 2.0.0 (October 2024)
+
+* [[[xml_part_2,W3C REC-xmlschema-2-20041028]]] XML Schema Part 2: _Datatypes_, Second Edition, W3C Recommendation, 28 October 2004, URL:&nbsp;https://www.w3.org/TR/xmlschema-2/
+
+* [[[ISO_19116,hidden(ISO 19116)]]]
+
+* [[[ISO_19101,hidden(ISO 19101)]]]
+
+* [[[ISO_19101_2002,hidden(ISO 19101:2002)]]]
+
+* [[[ISO_19113,hidden(ISO 19113)]]]
+
+* [[[ISO_19107,hidden(ISO 19107)]]]
+
+* [[[ISO_19109,hidden(ISO 19109)]]]
+
+* [[[ISO_19110,hidden(ISO 19110)]]]
+
+* [[[ISO_19117,hidden(ISO 19117)]]]
+
+* [[[ISO_19115-2,hidden(ISO 19115-2)]]]
+
+* [[[ISO_19132,hidden(ISO 19132)]]]
+
+* [[[IHO_S_44,hidden(IHO S-44)]]]
+
+* [[[ISO_19115,hidden(ISO 19115)]]]
+
+* [[[ISO_19111_2006,hidden(ISO 19111:2006)]]]
+
+* [[[ISO_19103,hidden(ISO 19103)]]]
+
+* [[[IHO_S100_GFM,hidden(IHO S-100)]]]
+
+* [[[ISO_19108_2002,hidden(ISO 19108:2002)]]]
+
+* [[[ISO_19130,hidden(ISO 19130)]]]
+
+* [[[ISO_8601_1988,hidden(ISO 8601:1988)]]]
+
+[[sec_1.4]]
+=== Terms, definitions and abbreviations
+
+[[sec_1.4.1]]
+[heading="terms and definitions"]
+==== Terms and definitions
+
+Terms and definitions have been taken from the normative references
+cited in <<sec_1.3>>. Only those which are specific to this document
+have been included and modified where necessary.
+
+===== accuracy
+
+closeness of agreement between an observed value and the true value
+or a reference value accepted as true
+
+[.source]
+<<ISO_19157_2013>>
+
+[.source]
+<<ISO_19116>>
+
+NOTE: A test result can be observations or measurements
+
+NOTE: For positioning services, the test result is a measured value
+or set of values
+
+NOTE: For observations and measurements, true values are not obtainable.
+In their place reference values which are accepted as true values
+are used
+
+===== application schema
+
+conceptual schema for data required by one or more applications
+
+[.source]
+<<ISO_19101>>
+
+===== computed
+
+calculated; derived rather than measured or observed
+
+===== continuous coverage
+
+coverage that returns different values for the same feature attribute
+at different direct positions within a single geometric object in
+its spatiotemporal domain
+
+[.source]
+<<ISO_19123_2005>>
+
+NOTE: Although the spatiotemporal domain of a continuous coverage
+is ordinarily bounded in terms of its spatial extent, it can be subdivided
+into an infinite number of direct positions.
+
+===== coordinate
+
+one of a sequence of numbers designating the position of a point in
+N-dimensional space
+
+[.source]
+<<ISO_19111_2003>>
+
+===== coordinate reference system
+
+coordinate system which is related to the real world by a datum
+
+[.source]
+<<ISO_19111_2003>>
+
+===== coverage
+
+{{ feature }} that acts as a *function* to return values from its
+*range* for any {{ direct position }} within its spatial, temporal,
+or spatiotemporal {{ domain }}
+
+[example]
+Examples include a raster *image*, polygon overlay, or digital elevation
+matrix.
+
+NOTE: In other words, a *coverage* is a {{ feature }} that has multiple
+values for each *attribute* type, where each {{ direct position }}
+within the geometric representation of the {{ feature }} has a single
+value for each *attribute* type
+
+[.source]
+<<ISO_19123_2005>>
+
+===== coverage geometry
+
+configuration of the {{ domain }} of a {{ coverage }} described in
+terms of {{ coordinate,coordinates }}
+
+[.source]
+<<ISO_19123_2005>>
+
+===== data product
+
+{{ dataset }} or {{ dataset series }} that conforms to a data product
+specification
+
+NOTE: The S-104 data product consists of metadata and one or more
+sets of water level height and trend
+
+[.source]
+<<ISO_19131_2007>>
+
+===== data quality element
+
+quantitative component documenting the quality of a dataset
+
+[.source]
+<<ISO_19101_2002>>
+
+NOTE: The applicability of a data quality element to a dataset depends
+on both the dataset's content and its product specification, the result
+being that all data quality elements may not be applicable to all
+datasets
+
+===== data quality evaluation procedure
+
+the whole of operations used in applying and reporting quality evaluation
+methods and their results
+
+[.source]
+<<ISO_19113>>
+
+===== data quality measure
+
+an evaluation of a data quality sub-element
+
+[.source]
+<<ISO_19113>>
+
+===== data quality overview element
+
+the non-quantitative component documenting the quality of a dataset.
+Information about the purpose, usage, and lineage of a dataset is
+non-quantitative quality information
+
+NOTE: Information about the purpose, usage and lineage of a dataset
+is non-quantitative quality information.
+
+[.source]
+<<ISO_19101>>
+
+===== data quality result
+
+a value or set of values resulting from applying a data quality measure
+or the outcome of evaluating the obtained value or set of values against
+a specified conformance quality level
+
+[example]
+A data quality result of "90" with a data quality value type of "percentage"
+reported for the data quality element and its data quality subelement
+"completeness, commission" is an example of a value resulting from
+applying a data quality measure to a data specified by a data quality
+scope. A data quality result of "true" with a data quality value type
+of "Boolean variable" is an example of comparing the value (90) against
+a specified acceptable conformance quality level (85) and reporting
+an evaluation of a kind, pass or fail.
+
+[.source]
+<<ISO_19113>>
+
+===== data quality scope
+
+the extent or characteristic(s) of the data for which quality information
+is reported
+
+[.source]
+<<ISO_19113>>
+
+NOTE: A data quality scope for a dataset can comprise a dataset series
+to which the dataset belongs, the dataset itself, or a smaller grouping
+of data located physically within the dataset sharing common characteristics.
+Common characteristics can be an identified feature type, feature
+attribute, or feature relationship; data collection criteria; original
+source; or a specified geographic or temporal extent.
+
+[.source]
+<<IHO_S_100,annex=A>>
+
+===== data quality sub-element
+
+a component of a data quality element describing a certain aspect
+of that data quality element
+
+[.source]
+<<ISO_19113>>
+
+===== dataset
+
+identifiable collection of data
+
+[.source]
+<<ISO_19115>>
+
+NOTE: A dataset may be a smaller grouping of data which, though limited
+by some constraint such as spatial extent or feature type, is located
+physically within a larger dataset. Theoretically, a dataset may be
+as small as a single feature or feature attribute contained within
+a larger dataset. A hardcopy map or chart may be considered a dataset.
+
+===== dataset series
+
+collection of datasets sharing the same product specification <<ISO_19115>>;
+collection of datasets with data for the same geographical area at
+different times or for successive time periods
+
+NOTE: This Product Specification uses the second sense.
+
+===== datum
+
+parameter or set of parameters that define the position of the origin,
+the scale, and the orientation of a coordinate system
+
+[.source]
+<<ISO_19111_2003>>
+
+[.source]
+<<ISO_19116>>
+
+NOTE: A datum defines the position of the origin, the scale, and the
+orientation of the axes of a coordinate system
+
+NOTE: A datum may be a geodetic datum, a vertical datum, an engineering
+datum, an image datum, or a temporal datum
+
+===== direct position
+
+position described by a single set of {{ coordinate, coordinates }}
+within a {{ coordinate reference system }}
+
+[.source]
+<<ISO_19107>>
+
+===== domain
+
+well-defined set
+
+[.source]
+<<ISO_19103>>
+
+NOTE: Domains are used to define the domain set and range set of operators
+and functions.
+
+===== elevation
+
+the altitude of the ground level of an object, measured from a specified
+vertical datum.
+
+[.source]
+<<IHO_S100_GFM>>
+
+===== feature
+
+abstraction of real world phenomena
+
+[.source]
+<<ISO_19101>>
+
+NOTE: A feature may occur as a type or an instance. Feature type or
+feature instance should be used when only one is meant.
+
+===== feature attribute
+
+characteristic of a feature
+
+[example]
+A *feature attribute* named _colour_ may have an *attribute* value
+_green_ which belongs to the *data type* _text_
+
+[example]
+A *feature attribute* named _length_ may have an *attribute* value
+_82.4_ which belongs to the *data type* _real_
+
+NOTE: A *feature attribute* may occur as a *type* or an *instance*.
+*Feature attribute* type or *feature attribute* instance is used when
+only one is meant.
+
+NOTE: A *feature attribute* type has a name, a *data type*, and a
+{{ domain }} associated to it. A *feature attribute* instance has
+an *attribute* value taken from the {{ domain }} of the *feature attribute*
+type.
+
+NOTE: In a *Feature Catalogue*, a *feature attribute* may include
+a value {{ domain }} but does not specify *attribute* values for
+{{ feature }} instances.
+
+[.source]
+<<ISO_19101>>
+
+[.source]
+<<ISO_19109>>
+
+[.source]
+<<ISO_19110>>
+
+[.source]
+<<ISO_19117>>
+
+===== height
+
+distance of a point from a chosen reference surface measured upward
+along a line perpendicular to that surface.
+
+[.source]
+<<ISO_19111_2006>>
+
+NOTE: Height is distinguished from elevation in that it is a directional
+measurement.
+
+===== georectified
+
+corrected for positional displacement with respect to the surface
+of the Earth
+
+[.source]
+<<ISO_19115_2_2009>>
+
+===== georeferenced grid
+
+{{ grid }} for which cells can be located by the use of specific algorithms.
+See {{ ungeorectified grid }}.
+
+===== grid
+
+network composed of a set of elements, or cells, whose vertices, or
+nodes, have defined positions within a coordinate system. See also
+{{ georeferenced grid }}, regular grid, {{ ungeorectified grid }},
+node, and {{ grid point }}.
+
+[.source]
+<<ISO_19123_2005>>
+
+NOTE: A rectangular grid has axes perpendicular to each other.
+
+NOTE: A uniform rectangular grid has constant spacing in the X-direction
+and constant spacing in the Y-direction, although the two spacing
+values are not necessarily equal.
+
+===== grid cell
+
+element of a grid defined by its vertices, or *nodes*
+
+===== grid coordinates 
+
+sequence of two or more numbers specifying a position with respect
+to its location on a {{ grid }}
+
+[.source]
+<<IHO_S_100,annex=A>>
+
+===== grid point
+
+point located at the intersection of two or more
+{{ grid cell,grid cells }} in a {{ grid }}. Also called a *node*.
+
+[.source]
+<<ISO_19123_2005>>
+
+===== gridded data
+
+data whose attribute values are associated with positions on a grid
+coordinate system
+
+[.source]
+<<ISO_19115_2_2009>>
+
+===== measurement
+
+the (detailed) dimensions of a physical quantity
+
+[.source]
+<<IHO_S_32>>
+
+===== observation
+
+the act or practice of noting and recording facts and events as for
+some scientific study. The measure of a quantity whose value is desired.
+The DATA so noted and recorded. A single measure, at a single setting
+of an apparatus
+
+[.source]
+<<IHO_S_32>>
+
+===== positional accuracy
+
+closeness of coordinate value to the true or accepted value in a specified
+reference system
+
+NOTE: The term absolute accuracy is sometimes used for this concept
+to distinguish it from relative positional accuracy. Where the true
+coordinate value may not be perfectly known, accuracy is normally
+tested by comparison with available values that can best be accepted
+as true
+
+[.source]
+<<ISO_19116>>
+
+===== record
+
+finite, named collection of related items (objects or values)
+
+[.source]
+<<ISO_19107>>
+
+NOTE: Logically, a record is a set of pairs <name,item>.
+
+===== result scope
+
+scope of the (data quality) result
+
+NOTE: Result scope is a subset of the data quality scope.
+
+[.source]
+<<IHO_S_97>>
+
+===== sequence
+
+finite, ordered collection of related items (objects or values) that
+may be repeated
+
+NOTE: Logically, a sequence is a set of pairs <item, offset>. LISP
+syntax, which delimits sequences with parentheses and separates elements
+in the sequence with commas, is used in this international standard
+
+[.source]
+<<ISO_19107>>
+
+===== standalone quality report
+
+free text document providing fully detailed information about data
+quality evaluations, results and measures used
+
+[.source]
+<<ISO_19157_2013>>
+
+===== temporal series
+
+collection of datasets with data for the same geographical area at
+different times or for successive periods
+
+===== timestamp
+
+value of time at which an object's state is measured and recorded
+
+[.source]
+<<ISO_19132>>
+
+===== uncertainty
+
+the interval (about a given value) that will contain the true value
+of the measurement at a specific confidence level
+
+[.source]
+<<IHO_S_44>>
+
+NOTE: Errors exist and are the differences between the measured value
+and the true value. Since the true value is never known it follows
+that the error itself cannot be known. Uncertainty is a statistical
+assessment of the likely magnitude of this error.
+
+===== water level trend
+
+change of water level at a given time, such as 'increasing', 'decreasing',
+or 'steady'.
+
+When the average change of the water level over a one hour period
+is greater than or equal to a value set by the Producing Authority
+in metres it is considered "increasing". When it is less than or equal
+to -(value set by the Producing Authority in metres), it is "decreasing".
+When it is between the values set by the Producing Authority, it is
+"steady".
+
+In areas of small water level range, for example Baltic Sea, use of
+"not available" is optional
+
+===== ungeorectified grid
+
+grid with non-uniform point spacing in any coordinate system. Includes
+triangular irregular networks (TINs) and those curvilinear coordinate
+grids whose node positions cannot be calculated analytically
+
+===== vertical coordinate system
+
+one-dimensional coordinate system used for gravity-related height
+or depth measurements
+
+[.source]
+<<ISO_19111_2003>>
+
+===== vertical datum
+
+datum describing the relation of gravity-related heights or depths
+to the Earth
+
+NOTE: In most cases the vertical datum will be related to mean sea
+level. Ellipsoidal heights are treated as related to a three-dimensional
+ellipsoidal coordinate system referenced to a geodetic datum. Vertical
+datums include sounding datums (used for hydrographic purposes), in
+which case the heights may be negative heights or depths
+
+[.source]
+<<ISO_19111_2003>>
+
+[[sec_1.4.2]]
+==== Abbreviations
+
+API:: Application Programming Interface
+
+CRS:: Coordinate Reference System
+
+DQWG:: Data Quality Working Group
+
+ECDIS:: Electronic Chart Display Information System
+
+EPSG:: European Petroleum Survey Group
+
+ENC:: Electronic Navigational Chart
+
+FC:: Feature Catalogue
+
+GIS:: Geographic Information Systems
+
+HDF:: Hierarchical Data Format
+
+IALA:: International Association of Marine Aids to Navigation and
+Lighthouse Authorities
+
+IHO:: International Hydrographic Organization
+
+IMO:: International Maritime Organization
+
+ISO:: International Organization for Standardization
+
+MRN:: Maritime Resource Name
+
+NetCDF:: Network Common Data Form
+
+PC:: Portrayal Catalogue
+
+SOLAS:: International Convention for the Safety of Life at Sea
+
+TIN:: Triangulated Irregular Network
+
+TWCWG:: Tides, Water Level and Currents Working Group
+
+UML:: Unified Modelling Language
+
+URN:: Uniform Resource Name
+
+UTC:: Coordinated Universal Time
+
+W3C:: World Wide Web Consortium
+
+XML:: eXtensible Markup Language
+
+[[sec_1.4.3]]
+==== Notation
+
+In this document conceptual schemas are presented in the Unified Modelling
+Language (UML). Several model elements used in this schema are defined
+in ISO Standards developed by ISO TC 211, or in IHO S-100. In order
+to ensure that class names in the model are unique ISO TC/211 has
+adopted a convention of establishing a prefix to the names of classes
+that define the TC/211 defined UML package in which the UML class
+is defined. Since the IHO Standards and this Product Specification
+make use of classes derived directly from the ISO Standards this convention
+is also followed here. In the IHO Standards the class names are identified
+by the name of the Standard, such as "_S100_" as the prefix optionally
+followed by the bialpha prefix derived from ISO. For the classes defined
+in this Product Specification the prefix is _"S104"._ In order to
+avoid having multiple classes instantiating the same root classes,
+the ISO classes and S-100 classes have been used where possible; however,
+a new instantiated class is required if there is a need to alter a
+class or relationship to prevent a reverse coupling between the model
+elements introduced in this document and those defined in S-100 or
+the ISO model.
+
+[[table_1.2]]
+.Sources of externally defined UML classes
+[cols="46,81,272"]
+|===
+h| Prefix h| Standard h| Package
+| CI   | <<ISO_19115_1>>      | Citation and Responsible Party
+| CV   | <<ISO_19123_2005>>   | Coverage Core & Discrete Coverages
+| DQ   | <<ISO_19157_2013>>   | Data Quality Information
+| DS   | <<ISO_19115_1>>      | Metadata Application Information
+| EX   | <<ISO_19115_1>>      | Metadata Extent information
+| IF   | <<ISO_19129_2009>>   | Imagery Gridded and Coverage Data Framework
+| LI   | <<ISO_19115_1>>      | Linage Information
+| MD   | <<ISO_19115_1>>      | Metadata entity set information
+| MI   | <<ISO_19115_2_2009>> | Metadata entity set imagery
+| S100 | <<IHO_S_100>>        | IHO Standard for Hydrographic Data
+| SC   | <<ISO_19111_2003>>   | Spatial Referencing by Coordinates
+| SD   | <<ISO_19130>>        | Sensor Data
+|===
+
+[[sec_1.5]]
+=== Use of language
+
+Within this document:
+
+* "Must" indicates a mandatory requirement.
+* "Should" indicates an optional requirement, that is the recommended
+process to be followed, but is not mandatory.
+* "May" means "allowed to" or "could possibly", and is not mandatory.
+
+[[sec_1.6]]
+=== General data product description
+
+NOTE: This clause provides general information regarding the data
+product.
+
+*Title:*:: Water Level Information for Surface Navigation
+
+*Abstract:*:: Encodes information and parameters for use in making
+a tidal and water level product.
+
+*Content:*:: Describes the tidal and water level data contained in
+the product +
+The specific content is defined by the Feature Catalogue and Schema.
+
+*Spatial Extent:*:: *Description:* Areas where tidal and water level
+information is available.
++
+--
+*East Bounding Longitude:* 180
+
+*West Bounding Longitude:* -180
+
+*North Bounding Latitude:* 90
+
+*South Bounding Latitude:* -90
+--
+
+*Purpose:*:: The data shall be used to produce a dataset to be used
+for dynamic water level applications, including an ECDIS.
+
+[[sec_1.7]]
+=== Data Product Specification metadata
+
+NOTE: This information uniquely identifies this Product Specification
+and provides information about its creation and maintenance. For further
+information on dataset metadata see <<sec_12>>.
+
+*Title:*:: Water Level Information for Surface Navigation
+
+*S-100 Version:*:: 5.2.0
+
+*S-104 Version:*:: 2.0.0
+
+*Date:*:: December 2024
+
+*Language:*:: English
+
+*Classification:*:: Unclassified
+
+*Contact:*:: International Hydrographic Organization.
++
+--
+4 quai Antoine 1er +
+B.P. 445 MC 98011 MONACO CEDEX +
+Telephone: +377 93 10 81 00 +
+Fax: + 377 93 10 81 40 +
+Email: mailto:info@iho.int[info@iho.int]
+--
+
+*Role:*:: Owner
+
+*URL:*:: https://registry.iho.int/[https://registry.iho.int]
+
+*Identifier:*:: S-104
+
+*Maintenance:*:: Changes to the Product SpecificationS-104 are coordinated
+by Tides, Water Level and Currents Working Group (TWCWG) of the IHO
+and made available via the IHO Publications web site. Maintenance
+of the Product Specification must conform to IHO Technical Resolution
+2/2007 (revised 2010). This Specification will be a standing agenda
+item for TWCWG meetings with clarifications, revisions and new editions
+released as required.
+
+[[sec_1.7.1]]
+==== IHO Product Specification maintenance
+
+[[sec_1.7.1.1]]
+===== Introduction
+
+Changes to S-104 will be released by the IHO as a New Edition, revision,
+or clarification.
+
+[[sec_1.7.1.2]]
+===== New Edition
+
+_New Editions_ of S-104 introduce significant changes. _New Editions_
+enable new concepts, such as the ability to support new functions
+or applications, or the introduction of new constructs or data types.
+_New Editions_ are likely to have a significant impact on either existing
+users or future users of S-104. All cumulative _revisions_ and _clarifications_
+must be included with the release of approved New Editions.
+
+[[sec_1.7.1.3]]
+===== Revision
+
+_Revisions_ are defined as substantive semantic changes to S-104.
+Typically, _revisions_ will change S-104 to correct factual errors;
+introduce necessary changes that have become evident as a result of
+practical experience or changing circumstances. A _revision_ must
+not be classified as a clarification. _Revisions_ could have an impact
+on either existing users or future users of S-104. All cumulative
+_clarifications_ must be included with the release of approved revisions.
+
+Changes in a revision are minor and ensure backward compatibility
+with the previous versions within the same Edition. Newer revisions,
+for example, introduce new features and attributes. Within the same
+Edition, a dataset of one version could always be processed with a
+later version of the Feature and Portrayal Catalogues.
+
+In most cases a new Feature Catalogue will result in a revision of
+S-104.
+
+[[sec_1.7.1.4]]
+===== Clarification
+
+_Clarifications_ are non-substantive changes to S-104. Typically,
+_clarifications_: remove ambiguity; correct grammatical and spelling
+errors; amend or update cross references; and insert improved graphics.
+A _clarification_ must not cause any substantive semantic change to
+S-104.
+
+Changes in a _clarification_ are minor and ensure backward compatibility
+with the previous versions within the same Edition.
+
+[[sec_1.7.1.5]]
+===== Version numbers
+
+The associated version control numbering to identify changes (n) to
+S-104 must be as follows:
+
+New Editions denoted as *n*.0.0
+
+Revisions denoted as n.*n*.0
+
+Clarifications denoted as n.n.*n*

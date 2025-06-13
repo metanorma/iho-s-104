@@ -1,0 +1,20 @@
+
+[[sec_2]]
+== Specification Scopes
+
+This Product Specification outlines the types of water level products
+from a national authority or authorised producer, to the end user.
+The data may be real-time observation, astronomical prediction, analysis
+or hybrid method, or forecast models. Requirements for data and metadata
+are provided. The data product is a time series product, including
+series of water level heights relative to a vertical datum and the
+water level trend (rising, falling, etc.). The data product is a gridded
+data product- provision of water level information for a defined region
+as a surface, allowing any grid point to be queried as per a traditional
+single point.
+
+*Scope ID:*:: Global
+
+*Level:*:: 006- series
+
+*Level name:*:: Water Level Dataset

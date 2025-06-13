@@ -1,0 +1,19 @@
+
+[[sec_9]]
+== Portrayal
+
+The display of gridded water level data is controlled by the underlying
+ENC or bathymetry product because S-104 data is used to adjust depth
+and uncertainty values in those products. This edition of S-104 therefore
+does not provide a portrayal catalogue or describe symbology. Further,
+the only interoperability functionalities described by S-98 which
+apply to S-104 are those pertaining to water level adjustment. These
+functionalities are described in S-98 Annex C.
+
+NOTE: Specification of the algorithm for adjustment of bathymetry
+data or ENC feature data is outside the scope of this Product Specification.
+It is described in S-98.
+
+NOTE: There are no specifications for the display of a water surface
+from gridded data as a distinct layer in this Product Specification
+Edition.
