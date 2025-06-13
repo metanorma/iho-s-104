@@ -1,0 +1,161 @@
+
+[[annexC]]
+[appendix]
+== Feature Catalogue
+
+[[sec_C-1]]
+=== Meta Feature Types
+
+[[sec_C-2]]
+=== Geo Feature Types
+
+[[sec_C-2.1]]
+==== Water Level
+
+*Definition:*:: The vertical position of a water surface.
+
+*CamelCase:*:: WaterLevel
+
+*Alias:*
+
+*Super type:*
+
+*Feature use type:*:: geographic
+
+*Primitive:*:: coverage
+
+*Remarks:*:: No remarks.
+
+*Attribute Bindings:*
+
+[cols="4,3,1,2",options="unnumbered"]
+|===
+h| S-104 Attribute h| Allowable Encoding Value h| Type h| Multiplicity
+
+| Water Level Height | | RE | 1,1
+
+| Water Level Trend
+| 1 : Decreasing +
+2 : Increasing +
+3 : Steady | EN | 1,1
+
+| Uncertainty        | | RE | 0,1
+|===
+
+[[sec_C-3]]
+=== Cartographic Feature Types
+
+[[sec_C-4]]
+=== Information Types
+
+[[sec_C-5]]
+=== Simple Attributes
+
+[[sec_C-5.1]]
+==== Water Level Height
+
+*Definition:*:: The height of a water surface relative to a vertical
+datum.
+
+*CamelCase:*:: waterLevelHeight
+
+*Alias:*
+
+*Value type:*:: real
+
+*Remarks:*:: No remarks.
+
+*Unit of measure name:*:: metre
+*definition:*::: SI metre
+*symbol:*::: m
+
+*Quantity specification*: length
+
+*Constraints:*
+
+[cols="22,20,19,23,16",options="unnumbered"]
+|===
+h| String Length h| Text Pattern 2+h| Range h| Precision
+
+.3+| (not specified) .3+| (none) | lowerBound | -99.99 .3+| 2
+
+| upperBound | 99.99
+| closure | closedInterval
+|===
+
+[[sec_C-5.2]]
+==== Water Level Trend
+
+*Definition:*:: The tendency of water level to change in a particular
+direction.
+
+*CamelCase:*:: waterLevelTrend
+
+*Alias:*
+
+*Value type:*:: enumeration
+
+*Remarks:*:: No remarks.
+
+*Listed Values:*
+
+[cols="14,29,57",options="unnumbered"]
+|===
+h| Code h| Label h| Definition
+
+| 1 | Decreasing | Becoming smaller in magnitude.
+| 2 | Increasing | Becoming larger in magnitude.
+| 3 | Steady     | Constant.
+|===
+
+[[sec_C-5.3]]
+==== Uncertainty
+
+*Definition:*:: Estimate characterising the range of values within
+which the true value of a measurement is expected to lie as defined
+within a particular confidence level. It is expressed as a positive
+value.
+
+*CamelCase:*:: uncertainty
+
+*Alias:*
+
+*Value type:*:: real
+
+*Remarks:*:: Represents a +/- value defining the possible range of
+associated depth, expressed as a positive number.
+
+*Unit of measure name:*:: metre
+*definition:*::: SI metre
+*symbol:*::: m
+
+*Quantity specification:*:: length
+
+*Constraints:*
+
+[cols="22,20,19,23,16",options="unnumbered"]
+|===
+h| String Length h| Text Pattern 2+h| Range h| Precision
+
+.3+| (not specified) .3+| (none)
+| lowerBound | 0.00 .3+| 2
+| upperBound | 99.99 | closure | closedInterval
+|===
+
+[[sec_C-6]]
+=== Complex Attributes
+
+[[sec_C-7]]
+=== Roles
+
+[[sec_C-8]]
+=== Information Associations
+
+[[sec_C-9]]
+=== Feature Associations
+
+[[sec_C-10]]
+=== Feature Catalogue XML
+
+The feature catalogue is provided as a separate XML file and can be
+downloaded from the IHO GI Registry.

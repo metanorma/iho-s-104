@@ -1,0 +1,140 @@
+
+[.preface]
+== Document History
+
+Changes to this Specification are coordinated by the Tides, Water
+Levels and Currents Working Group (TWCWG). New editions will be made
+available via the IHO web site. Maintenance of the Specification shall
+conform to IHO Resolution 2/2007 (as amended).
+
+[cols="61,99,109,281",options="unnumbered"]
+|===
+h| Version Number h| Date h| Editor h| Purpose
+
+| 0.0.0 | February 2015  | Z Jayaswal                     | Initial Draft
+| 0.0.1 | May 2016       | Z Jayaswal                     | TWCWG1 - Working group input incorporated from Brazil meeting.
+| 0.0.2 | August 2016    | Z Jayaswal                     | TWCWG - incorporate feedback on Portrayal and Attributes.
+| 0.0.3 | March 2017     | Z Jayaswal                     | Extract commonality from S-111 Ver. 0.1.10 to ensure consistency between standards.
+| 0.0.4 | May 2017       | Z Jayaswal                     | As edited during TWCWG2.
+| 0.0.5 | November 2017  | Z Jayaswal                     | Feedback from TWCWG and S-100WG.
+| 0.0.6 | September 2018 | Z Jayaswal                     | Feedback from TWCWG3 and S-129WG.
+| 0.0.7 | March 2019     | Z Jayaswal                     | Feedback from S100 Test Strategy Meeting Sep 2018.
+| 0.0.8 | April 2019     | Z Jayaswal, K Hess & G. Seroka | Feedback from NOAA and TWCWG4.
+
+| 0.0.9 | Aprril 2021 | Z Jayaswal, G. Seroka, R. Malyankar Review by TWCWG and S-104 project team | Feedback from TWCWG5.
+
+| 1.0.0 Draft 1 | June 2021 | R. Malyankar
+| Applied review comments on Ver. 0.0.9. Added carrier metadata attributes
+for coordinate systems approved by S-100WG. Added exchange set structure
+and use cases.
+| 1.0.0 Draft 2 | August 2021 | R. Malyankar. Review by ZJ, GS. | Applied comments on Draft 1.
+| 1.1.0-20220831 | August 2022 | R. Malyankar | Aligned with S-100 5.0.0; applied some of the held-over comments from Edition 1.0.0; new enumeration dictionary material
+
+| 1.1.0-20230131 | February 2023 | R. Malyankar, G. Seroka
+| Fill value for waterLevelHeight now has 2 zeroes after decimal point;
+specified datatype size for HDF5 attributes; clarification of attribute
+dimension in feature type metadata; updated references; updated rules
+for dataset and support file names; guidance on (optional) ISO metadata;
+adjusted language on use of Schematron and digital signatures; added
+emphasis for differences between S-100 and S-104 exchange catalogues;
+added productIdentifier metadata attribute; added Res. 3/1919 as a
+separate reference. Figures in Annex E removed.
+
+| 1.1.0 | April 2023 | R. Malyankar
+| Applied TWCWG review feedback; corrected S-100 error in digital
+signature types in metadata.
+
+| 2.0.0-20240131 | January 2024 | R. Malyankar
+| References updated; registry producer code URL replaced with main
+page URL; citation of S-100 WG7 paper removed and usage sentences
+updated (register is now active in the GI registry); multiple changes
+to reduce scope of S-104 reduced to regular grids per S-100 WG8; alignment
+with S-100 Edition 5.2; additional EPSG codes for horizontal reference
+systems; removed Annex B (Additional terms…); uncertainty attribute
+added; restricted maximum length of HDF5 string attributes (<<sec_12.3>>)
+| 2.0.0-20240208 | February 2024 | R. Malyankar | Added attribute
+_verticalCoordinateBase (<<table_12-1>>)_; sequencing rule must be
+linear (implicit in regular grid format); instance metadata constraints
+(<<table_12-3>>) adjusted for WLA compatibility
+| 2.0.0 Draft 2 | May 2024 | R. Malyankar | Applied feedback from
+S-104 PT; provision for multiple vertical datums; added optional dataOffsetCode;
+updated data quality section for multiple vertical datums and DQWG
+review of Ed. 1.0.0; removed Annexes for validation checks, additional
+terms, and sample datasets; added terms for data quality and selections
+from deleted "Additional Terms" Annex; updated fileless cancellation;
+aligned with S-100 5.2.0; updated UML diagrams as per feedback and
+changes to metadata; expanded material on S-98 conformance; added
+EPSG codes for UTM zones and newer WGS84 epochs
+| 2.0.0 Draft 3 | July 2024 | R. Malyankar | Clarifications for multiple
+vertical datums; editorial changes in S-158 series references; further
+alignment with scope reduction to RD-only; clarification of CRS encoding
+and addition of new EPSG code for WGS84 G2296
+| HSSC Draft 1 | September 2024 | R. Malyankar | Applied TWCWG review
+comments. Clarifications for datums, data quality, interpolation/extrapolation
+to fill gaps; added material for domain extent polygons; new metadata
+attribute for vertical datum epoch and guidance for epoch differences;
+updated language about optional attributes in Group_F; Group_F uom
+name "metres" changed to "metre" to conform to FC;locale constraints
+corrected (12.2.4).
+| MS Draft 1 | October 2024 | R. Malyankar | Applied HSSC comments
+(remove unused otherLocale (12.2.4); remove bilinear interpolation
+(12.3.2); updated S-98 and S-111 entries in references; updated PS
+date (1.7).
+
+|===
+
+[.preface]
+== Summary of Substantive Changes in Edition 2.0.0
+
+Bold references in the Clauses Affected column indicate the principal
+sections/clauses that are affected by the described change.
+
+[cols="467,127",options="unnumbered"]
+|===
+h| Change Summary h| Clauses Affected
+
+| Reduced scope to use only the regular grid spatial type and remove hindcast and difference products.
+| 1.1, 2, 3, 4.3.5, *4,4*, *4.5*, 6, 7.1, 7.5, 8.1, *9*, *10.2*, *12.3*, *Annex B* (Ann. C in ed. 1.1)
+| Aligned with S-100 Edition 5.2.0
+| 1.3.1, *1.7*, *4.5.1*, 7.2.1, *7.2.4*, 7.6, 8.2.1, 11.2.1.1, *12.2*, Annex B (Ann. C in ed. 1.1)
+| Removed Annex B (Additional terms...) and added selected terms from deleted Annex to clause 1.4
+| 1.4, Annex B (ed. 1.1)
+| Added uncertainty attribute to values record
+| *1.1.3*, 6.1.1, *10.2.2*, *Annex A*, *Annex C*
+| Adopted fileless cancellation method for cancelling datasets
+| *8.2.4*, 12.2.4
+| Annex D (Sample HDF5 Encoding) removed. Sample datasets and screen captures will be provided on the Web instead +
+Annex E (Validation) removed, S-158, S-158:100, and S-158:104 will replace this +
+Annex F (Use Cases) renumbered as Annex D.
+| *Annexes D, E and F* (ed. 1.1), 6.2, 6.4, 7.2, 7.2.1, 7.5.1, 10.3 (ed. 1.1, deleted), 11.2.1
+| Extended format to include grids with datum jumps (multiple vertical datums)
+| 6.1.4, *7.8*, 8.2.2, 8.2.3, *10.2.2*, *12.3.3*
+| Updated data quality to add descriptions of quality elements from S-97 Ed. 1.1 and revise quality measures applicable to datasets with datum jumps
+| *6*
+| Added description of regular grid spatial type
+| *4.5.2* (new)
+| Added UTM zones and newer WGS84 realizations
+| *5.1*
+| Expanded material on conformance with S-98
+| *7.6*, *7.7*
+| Removed descriptions of portrayal and S-104 portrayal catalogue (Ed. 2.0 does not have independent portrayal on ECDIS)
+| *9*, 11
+| Added material on identification of features
+| *10.2.2.11* (new)
+| Added provision for data points in grid cell centres
+| 7.9, 10.2.2.7, *12.3.2*
+| Removed ISO metadata files
+| *12.1*, 11.2.4, 12.3.1
+| New epoch attribute for vertical datum epoch and guidance for treatment of epochal differences
+| *5.2*, *7.8*, 12.3, *12.3.1*, *12.3.3*, Fig. B-6
+| Updated language about omitting unused optional attributes from Group_F
+| *10.2.2.2*
+
+|===
+
+.Foreword
+
+The International Hydrographic Organization Tides, Water Level and
+Currents Working Group (TWCWG) remembers Kurt Hess, and acknowledges
+his invaluable and significant contributions in developing this Product
+Specification within the TWCWG.

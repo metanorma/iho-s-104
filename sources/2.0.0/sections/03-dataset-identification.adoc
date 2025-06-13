@@ -1,0 +1,72 @@
+
+[[sec_3]]
+== Dataset Identification
+
+*Title:*:: Water Level Information for Surface Navigation
+
+*Alternate Title:*:: None
+
+*Abstract:*:: This data product is a file containing water level data
+for a particular geographic region and set of times, along with the
+accompanying metadata describing the content, variables, applicable
+times, locations and structure of the data product. Water level data
+is the height of the water observed or mathematically-predicted. The
+data may consist of water level at a small set of points where observations
+or predictions are available or may consist of numerous points organised
+in a grid as from a hydrodynamic model forecast.
+
+*Topic Category:*:: Producing Authority to choose the most appropriate
+from the list below:
+
+[cols="17,13,16,26,29",options="unnumbered"]
+|===
+h| Concept Name h| ISO 19115-1 Topic Category Number h| ISO 19115-1 Topic Category Code h| Definition h| Remarks
+
+| Inland Waters | 012 | inlandWaters
+| Inland water features, drainage systems and their characteristicsExamples:
+rivers and glaciers, salt lakes, water utilization plans, dams, currents,
+floods, water quality, hydrologic information
+| Use for datasets covering navigation on inland waterways
+| Oceans | 014 | oceans
+| Features and characteristics of salt water bodies
+(excluding inland waters) +
+Examples: tides, tsunamis, coastal information, reefs
+| Use for datasets intended for coastal, offshore, or ocean navigation
+| Transportation | 018 | transportation
+| Means and aids for conveying persons and/or goods +
+Examples: roads, airports/airstrips, shipping routes, tunnels, nautical
+charts, vehicle or vessel location, aeronautical charts, railways
+| Use for datasets intended for navigation (inland or maritime)
+|===
+
+*Geographic Description:*:: Areas specific to water navigation
+
+*Spatial Resolution:*:: The spatial resolution, or the spatial dimension
+of the earth covered by the size of a grid matrix cell (nominal ground
+sample distance), varies according to the model adopted by the producer.
+
+*Purpose:*:: Water level data in this product is intended to be used
+for dynamic adjustment of depths in bathymetry and ENC layers.
+
+*Language:*:: English
+
+*Classification:*:: Data can be classified as one of the following:
++
+--
+. Unclassified;
+. Restricted;
+. Confidential;
+. Secret;
+. Top Secret;
+. Sensitive but Unclassified;
+. For Official Use Only;
+. Protected; or
+. Limited Distribution.
+--
+
+*Spatial Representation Type:*:: Coverage
+
+*Point of Contact:*:: Producing Authority.
+
+*Use Limitation:*:: Invalid over land. Some datasets may be designated
+as not for navigation.

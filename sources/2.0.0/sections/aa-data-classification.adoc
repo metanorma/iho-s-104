@@ -1,0 +1,128 @@
+
+[[annexA]]
+[appendix]
+== Data Classification and Encoding Guide
+
+[[sec_A-1]]
+=== Features
+
+.Water Level (_WaterLevel_)
+[cols="249,178,40,73"]
+|===
+4+h| IHO Definition: FEATURE: *WATER LEVEL:* The vertical position
+of a water surface
+4+| *S-104 Geo Feature: Water Level*
+4+| *Primitives: pointSet, coverage*
+| *S-104 Attribute* | *Allowable Encoding Value* | *Type* | *Multiplicity*
+| Water Level Height
+| Must be in decimal metres, maximum resolution of 0.01 metres | RE | 1
+| Water Level Trend
+|
+1: Decreasing +
+2: Increasing +
+3: Steady
+| EN | 1
+| Uncertainty
+| Must be in decimal metres, maximum resolution of 0.01 metres | RE | 0..1
+|===
+
+[[sec_A-2]]
+=== Feature Attributes
+
+The number of attributes for _Water Level_ is three: water level height,
+water level trend, and uncertainty. Encoding remarks are included
+with each attribute specification, below.
+
+. Water Level Height (_waterLevelHeight_)
++
+--
+[cols=1,options="unnumbered"]
+|===
+a| *Water Level Height:* The height of a water surface relative to
+a vertical datum
+
+[underline]#Unit:# metre (m)
+
+[underline]#Maximum Resolution:# 0.01 m
+
+[underline]#Format:# xxx.xx
+
+[underline]#Example:# *10.54*
+
+[underline]#Remarks:#
+
+* Land mask or missing value is denoted by a unique number as specified
+in the metadata.
+* The height is relative to some vertical datum, which is defined
+in the metadata.
+* 0.01 metres equals 0.3937 inches (1 cm).
+|===
+--
+
+. Water Level Trend (_waterLevelTrend_)
++
+--
+[cols=1,options="unnumbered"]
+|===
+a| *Water Level Trend:* The tendency of water level to change in a
+particular direction.
+
+1:: Decreasing (_decreasing_)
+2:: Increasing (_increasing_)
+3:: Steady (_steady_)
+
+[underline]#Unit:# none (enumeration)
+
+[underline]#Resolution:# N/A (enumeration)
+
+[underline]#Format:# x
+
+[underline]#Example:# *3* (Steady)
+
+[underline]#Remarks:#
+
+* To determine category, use metadata variable _waterLevelTrendThreshold_
+(See <<table_12-1>>):
+
+** Decreasing: trend <= -__waterLevelTrendThreshold__
+** Increasing: trend >= +__waterLevelTrendThreshold__
+* Steady: -_waterLevelTrendThreshold_ < trend < +_waterLevelTrendThreshold_
+Where a value is not known, the fill value must be populated, which
+is _0_ (Unknown). The fill value may be used in non-tidal or similar
+regions.
+
+* Native integer type H5T_STD_U8LE should be used for the base type
+of the numeric code (_1_, _2_, or _3_ here) when creating the enumeration.
+|===
+--
+
+. *Uncertainty (_uncertainty_)*
++
+--
+[cols=1,options="unnumbered"]
+|===
+a| *Uncertainty:* Estimate characterising the range of values within
+which the true value of a measurement is expected to lie as defined
+within a particular confidence level. It is expressed as a positive
+value.
+
+[underline]#Unit:# metre (m)
+
+[underline]#Resolution:# 0.01 metre
+
+[underline]#Format:# xx.xx
+
+[underline]#Example:# *0.02*
+
+[underline]#Remarks:#
+
+* Represents a +/- value defining the possible range of associated
+water level height, expressed as a positive number. For example, 0.02
+represents +/- 0.02 m uncertainty in water level height.
+* Represents the uncertainty at a particular grid point and may be
+omitted if the uncertainty is the same at all grid points.
+* If the water level height for a particular values record is the
+fill value, the uncertainty in that record must be the uncertainty
+fill value.
+|===
+--

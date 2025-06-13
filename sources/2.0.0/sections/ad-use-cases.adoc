@@ -1,0 +1,229 @@
+
+[[annexD]]
+[appendix]
+== Use Cases
+
+[[sec_D-1]]
+=== German Water Level Data and Forecast
+
+[[sec_D-1.1]]
+==== Summary
+
+[cols="119,453",options="unnumbered"]
+|===
+h| Name: | German S-104 Water Level Data and Forecast. +
+(Courtesy: BSH - Bundesamt für Seeschifffahrt und Hydrographie).
+
+h| Description: | The usage of S-104 format for data delivery and
+the operational regular data transfer in near real time allows several
+applications. The optimised water level forecast builds the basis
+for safe navigation, especially in areas with strong tides, as the
+inner German Bight. The S-104 data may be used for route planning,
+allowing to adapt to changing water depth. Optimised water level forecasting
+leads to better route monitoring as well as route planning and a more
+efficient loading of ships. +
+Furthermore, the potential data transfer on ships helps for direct
+navigation of a vessel. It will allow a more efficient usage of narrow
+shipping channel or areas with high traffic density. +
+The main users are shipping companies and administration, pilots,
+and organisations for harbour and waterway management. Further applications
+are possible in fields of civil protection, protection of marine environment,
+support of offshore and coastal activities, as well as coastal engineering.
+
+h| Potential Actors: | Navigators, Marine Pilots, Shipping Companies,
+Vessel Control Centres, Ship and Harbour Managements, Port Authorities,
+BSH (Bundesamt für Seeschifffahrt und Hydrographie), WSV (Wasserstraßen-
+und Schifffahrtsverwaltung des Bundes).
+
+h| Potential Applications:
+a|
+. Route monitoring.
+. Route planning and forecast of safety corridor.
+. Other applications as civil protection, protection of marine environment,
+support of offshore and coastal activities, as well as coastal engineering.
+
+h| Data Requirements:
+a|
+* High quality water level forecast (with adequate spatial and temporal
+resolution).
+* Astronomical prediction.
+* Near real time observational data.
+
+h| Technical Aspects and Post- Processing:
+a|
+* Different kinds of water level data are stored in one file. Portrayal
+of real time observation, optimised water level forecast and astronomic
+prediction with the help of a WMS.
+* Transformation of all kinds of data.
+* Route planning with respect to forecasted water level.
+
+|===
+
+[[sec_D-1.2]]
+==== Additional details
+
+[[sec_D-1.2.1]]
+==== Types of data used to create S-104 test datasets
+
+. Operational Numerical Forecast Model Output
+.. Hydrodynamic model forecast for Elbe Estuary / German Bight
+.. 90m x 90m grid spacing / 900m x 900m grid spacing
+.. Forecast interval: 48h, 15 Minutes time step
+.. 1155 x 728 grid points / 1030 x 1761 grid points
+.. Update: 2 times daily
+
+. Observation
+.. Discrete observations from gauge stations
+.. Time spacing: 1 minute
+.. Update: near real time
+
+. Astronomical prediction
+.. Forecast for discrete locations
+.. Long range prediction
+.. Update: yearly
+
+. Model output statistics [MOS]
+.. Statistical method for optimizing numerical model forecast
+.. Available for some locations
+.. Forecast up to 7 days
+.. Time spacing: 15 Minutes
+.. Update: every 15 Minutes
+
+[[sec_D-1.2.2]]
+==== Data processing
+
+Numerical model output and model output statistics (MOS) at several
+stations have been combined for an optimised areal water level forecast.
+The method uses the surface shape of a hydrodynamic model forecast
+and corrects it with high accurate MOS forecasts at specific locations.
+This leads to an overall optimised and frequently updated water level
+surface forecast.
+
+[[sec_D-1.2.3]]
+==== S-104 data transformation
+
+The data described above, especially the post processed data, builds
+the basis for the creation of S-104 test data sets. The transformation
+of different formats are achieved by a tuple of tools:
+
+. S-104 regular grid converter
+.. Input: Hydrodynamic model forecast (MOS-corrected)
+.. Output: S-104 conformant HDF5 file
+
+. S-104 station data converter
+.. Input: Observation, Astronomic Prediction, MOS-Data, Numerical
+Model data (MOS-corrected) for discrete locations
+.. Output: single S-104 HDF5 file
+
+[[sec_D-1.2.4]]
+==== Results
+
+<<fig_D-1>> shows one application of S-104 datasets; a WMS to display
+the S-104 data for the use case pick report. The request pops up a
+figure displaying the data described above. The green line represents
+the observation, blue the astronomical prediction and black represents
+the hydrodynamic model forecast optimised with MOS. The purple line
+shows the difference between prediction and hydrodynamic model forecast.
+
+[[fig_D-1]]
+.Pick report for S-104 test data
+image::figure-d-1.png["",581,367]
+
+As a practical example, S-104 datasets were produced as a suitable
+format to deliver different kinds of water level data in one file.
+A regular data transfer via FTP has been established and the S-104
+data has been integrated in a WMS for a highly frequented region.
+The "pick report" portrayal has been implemented. It has been confirmed
+by consensus of a user workshop that the display of water level data
+as a pick report like specified in S-104 is good practice.
+
+[[sec_D-2]]
+=== Depth Adjustment in ECDIS
+
+[[sec_D-2.1]]
+==== Summary
+
+[cols="122,451",options="unnumbered"]
+|===
+h| Name: | Depth adjustment in ECDIS.
+
+h| Description: | S-104 data may be used for route planning, in combination
+with <<IHO_S_101>> ENC and <<IHO_S_102>> Bathymetric Surface data
+to provide navigation officers with dynamic water depth information
+for the purpose of route planning. This will allow efficient use of
+waterways with tidal or other dynamic variations of water levels,
+saving vessels transit time and fuel costs. +
+The main users are commercial vessels and pilots.
+
+h| Potential Actors: | Navigators, Marine Pilots, Hydrographic Offices.
+
+h| Potential Applications:
+a|
+* Route planning and assessments of safe depths.
+* Safety contours according to dynamic depths instead of the static
+contours currently provided by ENC data alone.
+
+h| Data Requirements:
+a|
+* High quality water level forecast (with adequate spatial and temporal
+resolution).
+* Astronomical prediction.
+* Near real time observational data.
+* <<IHO_S_102>> bathymetry data (with adequate spatial resolution).
+* Availability of underlying ENC data.
+* Vertical datums in <<IHO_S_102>> and S-104 data should match.
+
+h| Technical Aspects and Post- Processing:
+a|
+* S-104 data must be provided as a continuous coverage (data coding
+format 2 (regular grid), 3 (ungeorectified grid) or 7 (TIN)).
+* ECDIS must implement S-98 Annex C interoperability in order to integrate
+<<IHO_S_101>>, <<IHO_S_102>>, and S-104 data.
+* ECDIS must have functionality to implement route planning with respect
+to forecasted water levels.
+
+|===
+
+[[sec_D-2.2]]
+==== Additional details
+
+[[sec_D-2.2.1]]
+==== Types of data
+
+S-104 data, available as forecasted data in grid format covering the
+projected time of the transit and the planned route.
+
+<<IHO_S_102>> data, available in grid format covering the planned
+route.
+
+Relevant vessel parameters (draught, squat) are available to the ECDIS.
+
+[[sec_D-2.2.2]]
+==== Processing
+
+The ECDIS is used in route planning mode and the navigator plots the
+planned route or imports it from a S-421 dataset.
+
+The navigator sets the projected start time of the transit and the
+route parameters such as speed over ground, cross-track deviation,
+etc.
+
+The navigator selects a time interval based on the speed of the vessel
+and the time record interval between S-104 records that is encoded
+in the S-104 forecast data (see <<table_12-3>>).
+
+Adjustment zones are created by the ECDIS based on the route schedule,
+speed, and a buffer (calculated either as a multiple of cross-track
+deviation or a user-specified value). The extent of each adjustment
+zone depends on the speed and cross-track buffer.
+
+[[fig_D-2]]
+.Adjustment zones based on planned route (courtesy: Furuno Electric Company, Ltd)
+image::figure-d-2.png["",606,186]
+
+The ECDIS computes an "integrated and dynamic safety contour" in the
+region covered by the combined adjustment zones, computed from bathymetry
+data adjusted by the dynamic water levels extracted from the S-104
+record(s) corresponding to the time the vessel is transiting each
+adjustment zone.
+
