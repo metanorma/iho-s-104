@@ -46,6 +46,9 @@ implicitly in the S-100 Feature Catalogue's binding of attributes
 to a feature and in the name/datatype information in feature information
 datasets in the feature information group (<<IHO_S_100,part=10c,table=10c-8>>).
 
+[%landscape]
+<<<
+
 [[fig_B-3]]
 .Spatial Types - Coverages with Realizations from <<IHO_S_100,part=8>> and <<ISO_19123_2005>>
 image::figure-b-3.png["",926,179]
@@ -74,3 +77,6 @@ image::figure-b-5.png["",880,525]
 [[fig_B-6]]
 .All carrier metadata for coverage type Regular Grid (data coding format 2)
 image::figure-b-6.png["",886,575]
+
+[%portrait]
+<<<
