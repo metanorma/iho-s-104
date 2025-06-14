@@ -92,6 +92,9 @@ Time reference for all data will be UTC.
 
 More detailed information about the various classes and textual descriptions of the constraints are in the Tables in <<sec_12.2.1;to!sec_12.2.30>> following <<fig_12-4>>. Differences from generic S-100 metadata are emphasized for developer convenience in *bold* text.
 
+[%landscape]
+<<<
+
 [[fig_12-4]]
 .Details of Exchange Set Catalogue classes. Based on <<IHO_S_100,part=17,figure=17-7>>
 image::figure-12-4.png["",909,542]
@@ -645,6 +648,9 @@ more interiors expressed as Linear Rings using SRS EPSG:4326(See <<IHO_S_100,par
 NOTE: (from <<ISO_19115_1>>): If a polygon is used it should be closed
 (last point replicates first point).
 
+[%portrait]
+<<<
+
 [[sec_12.3]]
 === Carrier Metadata
 
@@ -695,6 +701,9 @@ The maximum length of all string HDF5 attributes is 300 characters.
 .Carrier metadata for the S-104 HDF5 group hierarchy
 image::figure-12-5.png["",565,500]
 
+[%landscape]
+<<<
+
 [[fig_12-6]]
 .General metadata - Carrier metadata for the root group
 image::figure-12-6.png["",847,506]
@@ -710,6 +719,9 @@ image::figure-12-8.png["",831,511]
 [[fig_12-9]]
 .Feature Instance metadata - Carrier metadata for the Values group in each Feature Instance group
 image::figure-12-9.png["",832,417]
+
+[%portrait]
+<<<
 
 For all carrier metadata, latitude and longitude values are precise
 to stem:[10^{-7}] degrees except where noted. All times are in UTC
